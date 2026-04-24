@@ -1,0 +1,60 @@
+# OS Generated Files
+.DS_Store
+Thumbs.db
+*.lnk
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build and Distribution Directories
+bin/
+build/
+dist/
+dist_backup/
+out/
+target/
+
+# Java Compiled Files
+*.class
+*.jar
+*.war
+*.ear
+
+# External SDKs and Tools (Heavily recommended to download separately)
+javafx-sdk/
+wixtoolset/
+wix311-binaries.zip
+
+# Libraries and Dependencies
+lib/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Logs
+*-log.txt
+build-log.txt
+build-log-final.txt
+
+# Sensitive Information
+keys.txt
+.env
+.env.*
+secrets.txt
+! .env.example
+
+# Windows Specific
+*.msi
+*.exe
+*.cab

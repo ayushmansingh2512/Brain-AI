@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.shape.Arc?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.forge.aiteam.MainController" stylesheets="@style.css">
+    <padding>
+        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+    </padding>
+
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <VBox HBox.hgrow="ALWAYS">
+            <Label text="Brain AI Assistant" styleClass="header-text"/>
+            <Label text="Your personal AI assembly line." styleClass="subtitle-text"/>
+        </VBox>
+        <Button text="⚙️ Settings" fx:id="settingsButton" styleClass="help-button" onAction="#onSettingsButtonClick"/>
+        <Button text="Clear" styleClass="help-button" onAction="#onClearButtonClick"/>
+        <Button text="How to Use" styleClass="help-button" onAction="#onHelpButtonClick"/>
+    </HBox>
+
+    <!-- Output area with floating spinner overlay -->
+    <StackPane VBox.vgrow="ALWAYS">
+        <TextArea fx:id="outputArea" editable="false" wrapText="true" prefHeight="380.0"/>
+
+        <!-- CSS Spinner: a rotating Arc in the bottom-right corner of the StackPane -->
+        <Arc fx:id="spinnerArc"
+             styleClass="spinner-arc"
+             radiusX="14" radiusY="14"
+             startAngle="0" length="270"
+             type="OPEN"
+             visible="false"
+             StackPane.alignment="BOTTOM_RIGHT"
+             translateX="-18" translateY="-18"/>
+
+        <!-- Consult-mode overlay label -->
+        <Label fx:id="consultLabel"
+               styleClass="consult-label"
+               wrapText="true"
+               visible="false"
+               StackPane.alignment="BOTTOM_CENTER"
+               translateY="-8"/>
+    </StackPane>
+
+    <HBox spacing="10.0" alignment="CENTER">
+        <TextField fx:id="userInputField" promptText="Type your task here..." HBox.hgrow="ALWAYS"/>
+        <Button fx:id="helloButton" text="Send to Brain 🚀" onAction="#onHelloButtonClick"/>
+        <Button fx:id="openBrowserButton" text="🌐" onAction="#onOpenBrowserButtonClick" disable="true" visible="false"/>
+    </HBox>
+</VBox>

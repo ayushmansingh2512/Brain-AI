@@ -1,0 +1,141 @@
+/*
+    Brain AI Assistant - Neubrutalist Restoration (v2)
+    Pink/Blue gradient, heavy black borders, matching height buttons & inputs.
+    Added: CSS spinner animation + consult-mode label + key-status styles.
+*/
+
+.root {
+	-fx-background-color: linear-gradient(
+		to bottom right,
+		#f8bbd0,
+		#bbdefb
+	); /* Pink to Blue */
+	-fx-font-family: 'System';
+	-fx-padding: 25;
+}
+
+.header-text {
+	-fx-font-size: 32px;
+	-fx-font-weight: 900;
+	-fx-text-fill: #1a1a1a;
+	-fx-padding: 0 0 5 0;
+}
+
+.subtitle-text {
+	-fx-font-size: 16px;
+	-fx-font-weight: bold;
+	-fx-text-fill: #1a1a1a;
+}
+
+/* Base style for all containers with the "Black Shadow" effect */
+.text-area,
+.text-field,
+.button {
+	-fx-border-color: black;
+	-fx-border-width: 2px;
+	-fx-background-radius: 0;
+	-fx-border-radius: 0;
+}
+
+.text-area {
+	-fx-control-inner-background: white;
+	-fx-text-fill: black;
+	-fx-background-color: white;
+	-fx-effect: dropshadow(one-pass-box, black, 0, 0, 4, 4);
+	-fx-font-family: 'Consolas', monospace;
+	-fx-font-size: 14px;
+}
+
+.text-field {
+	-fx-background-color: white;
+	-fx-text-fill: black;
+	-fx-effect: dropshadow(one-pass-box, black, 0, 0, 4, 4);
+	-fx-padding: 8 12;
+	-fx-pref-height: 45; /* Matching height with button */
+}
+
+/* All buttons now look like the action-button */
+.button {
+	-fx-background-color: #cbd5e1; /* Light grey/blue */
+	-fx-text-fill: black;
+	-fx-font-weight: bold;
+	-fx-effect: dropshadow(one-pass-box, black, 0, 0, 4, 4);
+	-fx-cursor: hand;
+	-fx-padding: 8 20;
+	-fx-pref-height: 45; /* Matching height with textfield */
+}
+
+.button:hover {
+	-fx-background-color: #94a3b8;
+}
+
+.button:pressed {
+	-fx-translate-x: 2;
+	-fx-translate-y: 2;
+	-fx-effect: dropshadow(one-pass-box, black, 0, 0, 2, 2);
+}
+
+/* Specific Style for Settings/Clear/HowTo */
+.help-button {
+	-fx-pref-height: 35;
+}
+
+/* ── CSS Spinner ─────────────────────────────────────────────────────────── */
+/*
+ * The spinner is a JavaFX Arc node rendered at the bottom-right of the
+ * output StackPane. Java animates it via RotateTransition. The Arc stroke
+ * is styled here; rotation and visibility are controlled in MainController.
+ */
+.spinner-arc {
+	-fx-stroke: #1a73e8;         /* Google-blue accent */
+	-fx-stroke-width: 3.5;
+	-fx-fill: transparent;
+	/* Subtle drop shadow so it's visible on white background */
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 4, 0, 0, 1);
+}
+
+/* ── Consult-mode label (Agent Paused overlay) ───────────────────────────── */
+.consult-label {
+	-fx-background-color: #fff3e0;
+	-fx-border-color: #e65100;
+	-fx-border-width: 2px;
+	-fx-text-fill: #bf360c;
+	-fx-font-weight: bold;
+	-fx-font-size: 13px;
+	-fx-padding: 8 16;
+	-fx-background-radius: 0;
+	-fx-border-radius: 0;
+	-fx-effect: dropshadow(one-pass-box, black, 0, 0, 3, 3);
+	/* Semi-transparent so output is still visible behind it */
+	-fx-opacity: 0.95;
+}
+
+/* ScrollBar Styling - Neubrutalist */
+.scroll-bar:vertical {
+	-fx-background-color: white;
+	-fx-border-color: black;
+	-fx-border-width: 2px;
+	-fx-pref-width: 16;
+}
+
+.scroll-bar:vertical .thumb {
+	-fx-background-color: black;
+	-fx-background-radius: 0;
+}
+
+.scroll-bar:vertical .track {
+	-fx-background-color: white;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+	-fx-background-color: white;
+	-fx-border-color: black;
+	-fx-border-width: 1px;
+}
+
+/* Fix for TextArea inner padding */
+.text-area .content {
+	-fx-background-color: white;
+	-fx-padding: 10;
+}
