@@ -5,11 +5,12 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.animation.RotateTransition;
 import javafx.util.Duration;
+import javafx.scene.Node;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
@@ -30,6 +31,11 @@ public class MainController {
     @FXML private Button     settingsButton;
     @FXML private Arc        spinnerArc;          // CSS spinner node
     @FXML private Label      consultLabel;        // "Agent Paused" overlay text
+
+    // ── Consult-mode MCQ components ──────────────────────────────────────────
+    @FXML private VBox       consultOptionsBox;
+    @FXML private VBox       choicesBox;
+    @FXML private TextField  otherInputField;
 
     private RotateTransition spinnerAnim;
 
@@ -53,7 +59,7 @@ public class MainController {
      * When the loop detector fires, the pipeline thread blocks on
      * waitForConsult.take() until the user provides guidance.
      */
-    private final SynchronousQueue<String> waitForConsult = new SynchronousQueue<>();
+    private final java.util.concurrent.BlockingQueue<String> waitForConsult = new java.util.concurrent.LinkedBlockingQueue<>(1);
     private volatile boolean inConsultMode = false;
 
     // ── Smart-scroll state ───────────────────────────────────────────────────
@@ -131,7 +137,11 @@ public class MainController {
         String key = agentRole + "::" + Integer.toHexString(responseText.hashCode());
         int count  = loopCounter.merge(key, 1, Integer::sum);
         if (count >= LOOP_THRESHOLD) {
-            loopCounter.clear(); // Reset so resume is clean
+            updateUI("\n🛑 ══════════════════════════════════════════════════════");
+            updateUI("   LOOP DETECTED: Agent [" + agentRole + "] produced the same result " + count + " times in a row.");
+            updateUI("   Last error / pattern:\n" + (responseText.length() > 500 ? responseText.substring(0, 500) + "..." : responseText));
+            updateUI("   ══════════════════════════════════════════════════════\n");
+            loopCounter.clear(); 
             return true;
         }
         return false;
@@ -147,6 +157,7 @@ public class MainController {
      */
     private String enterConsultMode(String agentRole, String lastError) throws InterruptedException {
         inConsultMode = true;
+        waitForConsult.clear(); // Ensure queue is empty before starting a new pause
         Platform.runLater(() -> {
             if (consultLabel != null) {
                 consultLabel.setText("⚠️ Agent Paused – Type guidance below and press Send to resume");
@@ -155,12 +166,41 @@ public class MainController {
             if (helloButton != null) helloButton.setDisable(false); // repurpose Send button
         });
 
+        // ── Header Message ──────────────────────────────────────────────────
         updateUI("\n\n🛑 ══════════════════════════════════════════════════════");
-        updateUI("   LOOP DETECTED: Agent [" + agentRole + "] produced the same result "
-                 + LOOP_THRESHOLD + " times in a row.");
-        updateUI("   Last error / pattern:\n   " + lastError);
+        if (agentRole.contains("REVIEW") || agentRole.contains("CONSULT")) {
+            updateUI("   AGENT PAUSED: " + agentRole);
+        } else {
+            updateUI("   LOOP DETECTED: Agent [" + agentRole + "] produced the same result "
+                     + LOOP_THRESHOLD + " times in a row.");
+        }
+        updateUI("   Last output / pattern:\n   " + (lastError.length() > 500 ? lastError.substring(0, 500) + "..." : lastError));
         updateUI("   The pipeline is PAUSED. Your execution context is preserved.");
-        updateUI("   👉 Type your guidance or a manual fix in the input field and press Send.");
+        
+        // ── MCQ Detection ────────────────────────────────────────────────────
+        List<String> choices = new ArrayList<>();
+        Matcher m = Pattern.compile("\\[CHOICE:\\s*([^\\]]+)\\]", Pattern.CASE_INSENSITIVE).matcher(lastError);
+        while (m.find()) {
+            choices.add(m.group(1).trim());
+        }
+
+        if (!choices.isEmpty()) {
+            Platform.runLater(() -> {
+                choicesBox.getChildren().clear();
+                for (String choice : choices) {
+                    CheckBox cb = new CheckBox(choice);
+                    choicesBox.getChildren().add(cb);
+                }
+                consultOptionsBox.setVisible(true);
+                consultOptionsBox.setManaged(true);
+                userInputField.setVisible(false);
+                userInputField.setManaged(false);
+                otherInputField.clear();
+            });
+            updateUI("   👉 Select one or more options below and press Send.");
+        } else {
+            updateUI("   👉 Type your guidance or a manual fix in the input field and press Send.");
+        }
         updateUI("══════════════════════════════════════════════════════════\n");
 
         showSpinner(false);
@@ -170,6 +210,10 @@ public class MainController {
         showSpinner(true);
         Platform.runLater(() -> {
             if (consultLabel != null) consultLabel.setVisible(false);
+            consultOptionsBox.setVisible(false);
+            consultOptionsBox.setManaged(false);
+            userInputField.setVisible(true);
+            userInputField.setManaged(true);
         });
         updateUI("▶️  Resuming pipeline with guidance: " + guidance + "\n");
         return guidance;
@@ -341,9 +385,10 @@ public class MainController {
 
     /** Available Gemini models shown in the Settings dropdown. */
     private static final String[][] GEMINI_MODELS = {
-        {"gemini-2.5-flash", "Gemini 2.5 Flash  (fast, free tier) ⚡"},
-        {"gemini-2.5-pro",   "Gemini 2.5 Pro    (powerful, best quality) 🧠"},
-        {"gemini-2.0-flash", "Gemini 2.0 Flash  (previous gen, stable) 🔧"},
+        {"gemini-3-flash-preview", "Gemini 3 Flash Preview (Latest & Fastest) ⚡"},
+        {"gemini-2.0-flash",       "Gemini 2.0 Flash (Advanced) 🧠"},
+        {"gemini-1.5-flash",       "Gemini 1.5 Flash (Stable/Fast) 🔧"},
+        {"gemini-1.5-pro",         "Gemini 1.5 Pro (Highest Quality) 💎"},
     };
 
     @FXML
@@ -475,19 +520,67 @@ public class MainController {
 
     @FXML
     protected void onHelloButtonClick() {
-        // ── "Send" while in consult mode → resume the paused pipeline ──────
+            // ── "Send" while in consult mode → resume the paused pipeline ──────
         if (inConsultMode) {
-            String guidance = userInputField.getText().trim();
-            if (guidance.isEmpty()) {
-                updateUI("⚠️ Please type your guidance first, then press Send.");
+            StringBuilder guidance = new StringBuilder();
+            
+            // 1. Collect MCQ choices (from checkboxes)
+            if (choicesBox != null && !choicesBox.getChildren().isEmpty()) {
+                for (javafx.scene.Node node : choicesBox.getChildren()) {
+                    if (node instanceof CheckBox) {
+                        CheckBox cb = (CheckBox) node;
+                        if (cb.isSelected()) {
+                            if (guidance.length() > 0) guidance.append(", ");
+                            guidance.append(cb.getText());
+                        }
+                    }
+                }
+            }
+
+            // 2. Add "Other" input field
+            String other = otherInputField.getText().trim();
+            if (!other.isEmpty()) {
+                if (guidance.length() > 0) guidance.append(" | Guidance: ");
+                guidance.append(other);
+            }
+
+            // 3. Fallback: also check the main userInputField just in case it's visible or has text
+            String mainText = userInputField.getText().trim();
+            if (!mainText.isEmpty() && !mainText.equals(other)) {
+                if (guidance.length() > 0) guidance.append(" | Input: ");
+                guidance.append(mainText);
+            }
+
+            String finalGuidance = guidance.toString().trim();
+            if (finalGuidance.isEmpty()) {
+                updateUI("⚠️ Please select an option or type your guidance first.");
                 return;
             }
+            
+            // UI cleanup
             userInputField.clear();
+            otherInputField.clear();
+            updateUI("▶️ Sending guidance to Brain...");
+
             Platform.runLater(() -> {
                 if (helloButton != null) helloButton.setDisable(true);
             });
-            try { waitForConsult.put(guidance); }
-            catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+
+            // Timed handoff to avoid freezing the UI if the pipeline thread is stuck
+            try {
+                // Clear any stale entries just in case, then offer the new one
+                waitForConsult.clear();
+                boolean sent = waitForConsult.offer(finalGuidance, 5, java.util.concurrent.TimeUnit.SECONDS);
+                if (!sent) {
+                    updateUI("⚠️ Brain is busy or not responding (timeout). Please try again.");
+                    Platform.runLater(() -> { if (helloButton != null) helloButton.setDisable(false); });
+                } else {
+                    // Success: pipeline thread has been signaled (or will be soon)
+                    // Note: helloButton stays disabled while pipeline resumes
+                }
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
             return;
         }
 
@@ -522,6 +615,30 @@ public class MainController {
                                                               architectPrompt, userTask);
                     updateUI("--- ARCHITECT'S PLAN ---\n" + architectPlan + "\n");
                     db.saveMessage(projectId, "ARCHITECT", architectPlan);
+
+                    // ── 1b. CONSULTATION (User Approval/Choice) ─────────────
+                    updateUI("\n⏳ [Consultation] Please review the Architect's plan above.");
+                    updateUI("   Choose an option, provide feedback, or type 'Proceed' to start coding.");
+                    String userGuidance = enterConsultMode("ARCHITECT_REVIEW", architectPlan);
+                    updateUI("✅ [Consultation] Guidance received: " + userGuidance);
+                    
+                    // ── 1c. REFINEMENT (Architect "thinks" and finalizes) ────────
+                    if (!userGuidance.equalsIgnoreCase("continue") && !userGuidance.equalsIgnoreCase("proceed")) {
+                        updateUI("\n🤔 [Architect] Refining plan based on your guidance...");
+                        String refinePrompt = architectPrompt + "\n\n"
+                            + "The user has provided guidance/choices for your initial plan.\n"
+                            + "Incorporate this feedback and produce a FINAL, COMPLETE technical plan.\n"
+                            + "The coder will follow this final plan exactly. No more questions.";
+                        String refineContext = "Original Task: " + userTask + "\n\n"
+                            + "Initial Plan:\n" + architectPlan + "\n\n"
+                            + "User Guidance:\n" + userGuidance;
+                        
+                        architectPlan = askAgentResilient(gemini, "ARCHITECT", refinePrompt, refineContext);
+                        updateUI("--- REFINED ARCHITECT'S PLAN ---\n" + architectPlan + "\n");
+                        db.saveMessage(projectId, "ARCHITECT_REFINED", architectPlan);
+                    } else {
+                        updateUI("➡️ [Consultation] Proceeding with original plan.");
+                    }
 
                     String projectType = detectProjectType(architectPlan);
                     updateUI("🔖 Project type: " + projectType);
@@ -640,7 +757,9 @@ public class MainController {
     // ─────────────────────────────────────────────────────────────────────────
     private String buildJavaCoderContext(String userTask, String architectPlan) {
         return "Task: " + userTask + "\nPlan:\n" + architectPlan
-            + "\nIMPORTANT: Use [FILE: Name.java] and [ENDFILE] tags. DO NOT use markdown."
+            + "\nIMPORTANT: Use [FILE: path/to/Name.java] and [ENDFILE] tags. DO NOT use markdown."
+            + "\n- ALWAYS use Java Swing for GUI components."
+            + "\n- COMMENT EVERY LINE or logical block to explain the logic clearly."
             + "\n- Include ALL necessary imports at the top of EVERY file."
             + "\n- Use ABSOLUTE paths for any file I/O. Call System.getProperty(\"user.dir\") first."
             + "\n- Consumer<Void> lambdas: use (Void v) -> { ... } not () -> { ... }."
@@ -839,15 +958,19 @@ public class MainController {
                 String projectCtx   = getProjectFilesContext(projectPath);
                 String repairContext =
                     "ERROR LOGS:\n" + buildError.getMessage() + "\n\n"
-                    + "CURRENT FILES:\n" + projectCtx + "\n\n"
+                    + "CURRENT FILES (Full Structure):\n" + projectCtx + "\n\n"
                     + "FIX RULES:\n"
+                    + "- Maintain EXACTLY the same directory and package structure as shown in CURRENT FILES.\n"
+                    + "- Use [FILE: path/to/FileName.java] tags with the relative path from the project root.\n"
+                    + "- Always use Java Swing for GUI fixes.\n"
+                    + "- EXPLAIN YOUR FIXES using detailed comments inside the code.\n"
                     + "- Add ALL missing imports\n"
                     + "- Use ABSOLUTE paths for file I/O\n"
                     + "- Consumer<Void> lambdas: (Void v) -> { ... }\n"
                     + "- Import javax.swing.tree.ExpandVetoException\n"
                     + "- Import java.awt.Image where used\n"
                     + "- Cast JOptionPane 7-arg result to String\n"
-                    + "- Return COMPLETE [FILE: Name.java]...[ENDFILE] blocks only. No markdown.";
+                    + "- Return COMPLETE [FILE: path/to/Name.java]...[ENDFILE] blocks only. No markdown code fences.";
 
                 // Check for a loop before calling the AI
                 if (checkLoop("REPAIR", buildError.getMessage())) {
@@ -921,23 +1044,59 @@ public class MainController {
     // Utilities
     // ─────────────────────────────────────────────────────────────────────────
     private boolean extractAndCreateFiles(String aiOutput, String projectName) throws Exception {
-        String  basePath = PROJECTS_ROOT + File.separator + projectName;
-        Pattern pattern  = Pattern.compile(
-                "\\[FILE:\\s*(.*?)\\](.*?)\\[ENDFILE\\]", Pattern.DOTALL);
-        Matcher matcher  = pattern.matcher(aiOutput);
-        boolean found    = false;
+        String basePathStr = PROJECTS_ROOT + File.separator + projectName;
+        Path   basePath    = Paths.get(basePathStr).toAbsolutePath().normalize();
+        
+        Pattern pattern = Pattern.compile("\\[FILE:\\s*(.*?)\\](.*?)\\[ENDFILE\\]", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(aiOutput);
+        boolean found   = false;
 
         while (matcher.find()) {
             found = true;
-            String filePath    = matcher.group(1).trim()
-                    .replace("src/main/java/", "").replace("src/", "");
-            String fileContent = matcher.group(2).trim();
-            Path   fullPath    = Paths.get(basePath, filePath);
+            String originalPath = matcher.group(1).trim();
+            String fileContent  = matcher.group(2).trim();
+
+            // 1. Robust Markdown Cleaning: strip backticks and language identifiers
+            fileContent = fileContent.replaceAll("(?i)^```[a-z]*\\n", "")
+                                     .replaceAll("(?i)^```[a-z]*", "")
+                                     .replaceAll("(?i)\\n```$", "")
+                                     .replaceAll("(?i)```$", "");
+
+            // 2. Normalize path and strip common prefixes added by confused agents
+            String filePath = originalPath.replace("src/main/java/", "")
+                                          .replace("src/", "")
+                                          .replace("\\", "/");
+
+            // 3. Package-Aware Path Correction for Java files
+            if (filePath.endsWith(".java")) {
+                Matcher pkgMatcher = Pattern.compile("^package\\s+([\\w\\.]+);", Pattern.MULTILINE).matcher(fileContent);
+                if (pkgMatcher.find()) {
+                    String pkg     = pkgMatcher.group(1).trim();
+                    String pkgPath = pkg.replace(".", "/");
+                    String fileName = Paths.get(filePath).getFileName().toString();
+                    
+                    // Force the file into the correct package-derived directory
+                    if (!filePath.startsWith(pkgPath)) {
+                        String oldPath = filePath;
+                        filePath = pkgPath + "/" + fileName;
+                        updateUI("🔧 [Auto-Correct] Fixed directory for " + fileName + " (mapped package '" + pkg + "' to '" + pkgPath + "')");
+                    }
+                }
+            }
+
+            Path fullPath = basePath.resolve(filePath).toAbsolutePath().normalize();
+            
+            // 4. Security Guard: Prevent writing outside project boundaries (Path Traversal)
+            if (!fullPath.startsWith(basePath)) {
+                updateUI("🛑 [Security] Blocked attempt to write outside project root: " + originalPath);
+                continue;
+            }
+
             Files.createDirectories(fullPath.getParent());
             Files.writeString(fullPath, fileContent);
             updateUI("📄 Created: " + fullPath);
         }
-        if (!found) updateUI("⚠️ No [FILE] tags detected! Code was not saved.");
+        if (!found) updateUI("⚠️ No [FILE] tags detected in the AI output.");
         return found;
     }
 
@@ -986,7 +1145,8 @@ public class MainController {
                 })
                 .forEach(p -> {
                     try {
-                        ctx.append("[FILE: ").append(p.getFileName()).append("]\n")
+                        String relPath = Paths.get(projectPath).relativize(p).toString().replace("\\", "/");
+                        ctx.append("[FILE: ").append(relPath).append("]\n")
                            .append(Files.readString(p)).append("\n[ENDFILE]\n\n");
                     } catch (java.io.IOException ignored) {}
                 });
@@ -995,6 +1155,7 @@ public class MainController {
     }
 
     private String runCmd(String directory, String... command) throws Exception {
+        updateUI("💻 [System] Running: " + String.join(" ", command));
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.directory(new File(directory));
         pb.redirectErrorStream(true);

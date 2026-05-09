@@ -49,6 +49,7 @@
 .text-field {
 	-fx-background-color: white;
 	-fx-text-fill: black;
+	-fx-prompt-text-fill: #555;
 	-fx-effect: dropshadow(one-pass-box, black, 0, 0, 4, 4);
 	-fx-padding: 8 12;
 	-fx-pref-height: 45; /* Matching height with button */
@@ -138,4 +139,45 @@
 .text-area .content {
 	-fx-background-color: white;
 	-fx-padding: 10;
+}
+/* ── MCQ Choice Styles ─────────────────────────────────────────────────── */
+.consult-options-container {
+    -fx-background-color: #f1f5f9;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(one-pass-box, black, 0, 0, 6, 6);
+}
+
+.choice-header {
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1a1a1a;
+}
+
+.choice-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1px;
+}
+
+.check-box {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: black;
+    -fx-shape: "M 0 0 L 2 2 L 6 -2"; /* Custom checkmark shape */
 }

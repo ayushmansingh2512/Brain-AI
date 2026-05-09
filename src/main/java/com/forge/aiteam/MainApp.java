@@ -182,6 +182,8 @@ public class MainApp extends Application {
     // ─────────────────────────────────────────────────────────────────────────
 
     public static void main(String[] args) {
+        // Force Java to use Windows System Proxy settings to resolve DNS/Network issues
+        System.setProperty("java.net.useSystemProxies", "true");
         launch();
     }
 }

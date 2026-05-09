@@ -19,8 +19,8 @@ public class GeminiService {
     public String askAgent(String systemPrompt, String userTask) {
         APIKeyManager mgr = APIKeyManager.getInstance();
 
-        // Read model from system property (set via Settings dialog), default to flash
-        String model = System.getProperty("BRAIN_MODEL", "gemini-2.5-flash");
+        // Read model from system property (set via Settings dialog), default to 1.5 flash
+        String model = System.getProperty("BRAIN_MODEL", "gemini-1.5-flash");
 
         String lastError = "Unknown error";
 

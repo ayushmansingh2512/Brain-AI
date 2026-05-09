@@ -75,24 +75,23 @@ public class DatabaseConnection {
     // ─────────────────────────────────────────────────────────────────────────
 
     private static void insertDefaultPrompts(Connection conn) throws SQLException {
-        // Check if prompts already exist AND are the latest version (v3+)
-        try (ResultSet rs = conn.createStatement()
-                .executeQuery("SELECT COUNT(*) FROM agents WHERE role_name = 'PARALLEL_CODER'")) {
-            rs.next();
-            if (rs.getInt(1) > 0) return; // Already seeded with latest prompts
-        }
         // Wipe and re-seed if outdated
-        conn.createStatement().execute("DELETE FROM agents");
+        // conn.createStatement().execute("DELETE FROM agents"); // Optional: let MERGE handle it
 
         String[][] prompts = {
             {
                 "ARCHITECT",
                 "You are a senior software architect. Analyze the user's request and produce a "
                 + "clear, detailed technical plan. Rules:\n"
-                + "- Decide the project type: write [TYPE: JAVA] for Java Swing/AWT desktop apps "
+                + "- Decide the project type: write [TYPE: JAVA] for Java Swing desktop apps (preferred for GUI) "
                 + "  or [TYPE: WEB] for HTML/CSS/JS or Node.js apps.\n"
-                + "- List every file that must be created with its EXACT intended absolute path "
-                + "  relative to the project root, its purpose, main classes/functions, and key logic.\n"
+                + "- Provide at least TWO implementation options if applicable (e.g., 'Option 1: Lightweight' "
+                + "  and 'Option 2: Feature-Rich').\n"
+                + "- For Java GUI tasks, ALWAYS specify Java Swing components.\n"
+                + "- List every file that must be created with its EXACT intended path "
+                + "  relative to the project root (e.g., com/mycompany/App.java).\n"
+                + "- If you need user input or want to offer choices (e.g., UI theme, features), "
+                + "  use the format: [CHOICE: Option Text] for each option.\n"
                 + "- Explicitly state the project root directory in your plan.\n"
                 + "- Be precise so the coder can implement without ambiguity."
             },
@@ -100,13 +99,13 @@ public class DatabaseConnection {
                 "CODER",
                 "You are an expert Java developer. Write COMPLETE, compilable Java code based on "
                 + "the architect's plan. CRITICAL FILE SYSTEM RULES:\n"
-                + "- ALWAYS use absolute paths or paths explicitly relative to the stated project root.\n"
-                + "- NEVER write files to / or any root directory. All files go under the project root.\n"
-                + "- At the top of any file that does file I/O, print System.getProperty('user.dir') "
-                + "  to confirm the working directory before any file operations.\n"
-                + "- Wrap every file in [FILE: FileName.java]...[ENDFILE] tags. The filename inside "
-                + "  the [FILE:] tag is relative to the project root — do NOT use absolute paths in tags.\n"
+                + "- ALWAYS use Java Swing for GUI components.\n"
+                + "- STRICTLY follow the package and directory structure defined in the architect's plan.\n"
+                + "- Wrap every file in [FILE: path/to/FileName.java]...[ENDFILE] tags.\n"
+                + "- NEVER create duplicate files in the root directory if a package directory is specified.\n"
                 + "- Include ALL necessary imports at the top of EVERY file.\n"
+                + "- COMMENT EVERY LINE OR LOGICAL BLOCK extensively to explain the logic. "
+                + "  This is critical so the repair agent can understand your intent.\n"
                 + "- Never use markdown code blocks (``` fences) — raw code only.\n"
                 + "- Consumer<Void> lambdas: use (Void v) -> { ... } syntax.\n"
                 + "- Import javax.swing.tree.ExpandVetoException where needed.\n"
@@ -131,12 +130,11 @@ public class DatabaseConnection {
                 "WEB_CODER",
                 "You are an expert web developer. Write COMPLETE, production-ready web code based "
                 + "on the architect's plan. CRITICAL FILE SYSTEM RULES:\n"
-                + "- ALWAYS use paths relative to the project root. Never use absolute OS paths "
-                + "  (e.g., /home/user/...) inside HTML/CSS/JS source files.\n"
-                + "- For Node.js: all require() calls must use paths relative to the file's location "
-                + "  using __dirname (e.g., path.join(__dirname, 'views')).\n"
+                + "- ALWAYS use paths relative to the project root. Never use absolute OS paths.\n"
                 + "- Wrap every file in [FILE: filename.ext]...[ENDFILE] tags.\n"
                 + "- Always create at least: index.html, style.css, script.js.\n"
+                + "- COMMENT EVERY LINE OR LOGICAL BLOCK extensively to explain the logic. "
+                + "  Detailed comments help the repair agent identify and fix issues correctly.\n"
                 + "- For Node.js: include package.json with a 'start' script.\n"
                 + "- Use relative paths for all script/link src attributes in HTML.\n"
                 + "- Do NOT use ES module import/export for browser projects.\n"
@@ -147,10 +145,10 @@ public class DatabaseConnection {
                 "TESTER",
                 "You are a senior code reviewer and QA engineer. Review the provided code for "
                 + "bugs, missing imports, logic errors, and compilation issues. CRITICAL RULES:\n"
-                + "- Return the COMPLETE fixed code using [FILE: filename]...[ENDFILE] tags for EVERY file.\n"
+                + "- Return the COMPLETE fixed code using [FILE: path/to/filename]...[ENDFILE] tags for EVERY file.\n"
+                + "- Ensure the path in the [FILE:] tag matches the existing project structure (e.g., com/mycompany/App.java).\n"
                 + "- NEVER return partial files — always return the full file content.\n"
-                + "- Verify all file I/O operations use absolute or properly rooted relative paths. "
-                + "  Fix any path that references a root directory or an undefined variable.\n"
+                + "- Verify all file I/O operations use absolute or properly rooted relative paths.\n"
                 + "- If all files are correct, still return them all in the same [FILE] format."
             },
             {

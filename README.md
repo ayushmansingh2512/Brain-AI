@@ -89,6 +89,22 @@ erDiagram
 
 ---
 
+## 🛠️ Developer Tools
+
+### Brain AI Manager (`brainai-manager.ps1`)
+A comprehensive PowerShell utility for managing the platform:
+- **Project Explorer**: Browse history and export agent logs.
+- **API Key Validator**: Test Gemini keys against the live API.
+- **H2 Console**: Launch the web-based SQL interface.
+- **DB Maintenance**: Reset projects or force-refresh system prompts.
+
+**Run it via:**
+```powershell
+.\brainai-manager.ps1
+```
+
+---
+
 ## 📥 Installation & Setup
 
 ### Prerequisites
