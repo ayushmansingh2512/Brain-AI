@@ -24,6 +24,7 @@
             <Label text="Your personal AI assembly line." styleClass="subtitle-text"/>
         </VBox>
         <Button text="⚙️ Settings" fx:id="settingsButton" styleClass="help-button" onAction="#onSettingsButtonClick"/>
+        <Button text="📂 Load Project" styleClass="help-button" onAction="#onLoadProjectButtonClick"/>
         <Button text="Clear" styleClass="help-button" onAction="#onClearButtonClick"/>
         <Button text="How to Use" styleClass="help-button" onAction="#onHelpButtonClick"/>
     </HBox>

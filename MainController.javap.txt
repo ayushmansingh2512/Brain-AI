@@ -1,0 +1,3461 @@
+﻿Compiled from "MainController.java"
+public class com.forge.aiteam.MainController {
+  private javafx.scene.control.TextArea outputArea;
+
+  private javafx.scene.control.TextField userInputField;
+
+  private javafx.scene.control.Button helloButton;
+
+  private javafx.scene.control.Button openBrowserButton;
+
+  private javafx.scene.control.Button settingsButton;
+
+  private javafx.scene.shape.Arc spinnerArc;
+
+  private javafx.scene.control.Label consultLabel;
+
+  private javafx.scene.layout.VBox consultOptionsBox;
+
+  private javafx.scene.layout.VBox choicesBox;
+
+  private javafx.scene.control.TextField otherInputField;
+
+  private javafx.animation.RotateTransition spinnerAnim;
+
+  private static final java.lang.String TYPE_JAVA;
+
+  private static final java.lang.String TYPE_WEB;
+
+  private static final java.lang.String TYPE_REACT;
+
+  private static final java.lang.String PROJECTS_ROOT;
+
+  private volatile java.lang.String lastWebProjectPath;
+
+  private final java.util.Map<java.lang.String, java.lang.Integer> loopCounter;
+
+  private static final int LOOP_THRESHOLD;
+
+  private final java.util.concurrent.BlockingQueue<java.lang.String> waitForConsult;
+
+  private volatile boolean inConsultMode;
+
+  private volatile boolean userScrolledUp;
+
+  private static final java.lang.String[][] GEMINI_MODELS;
+
+  public com.forge.aiteam.MainController();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: aconst_null
+       6: putfield      #7                  // Field lastWebProjectPath:Ljava/lang/String;
+       9: aload_0
+      10: new           #13                 // class java/util/HashMap
+      13: dup
+      14: invokespecial #15                 // Method java/util/HashMap."<init>":()V
+      17: putfield      #16                 // Field loopCounter:Ljava/util/Map;
+      20: aload_0
+      21: new           #20                 // class java/util/concurrent/LinkedBlockingQueue
+      24: dup
+      25: iconst_1
+      26: invokespecial #22                 // Method java/util/concurrent/LinkedBlockingQueue."<init>":(I)V
+      29: putfield      #25                 // Field waitForConsult:Ljava/util/concurrent/BlockingQueue;
+      32: aload_0
+      33: iconst_0
+      34: putfield      #29                 // Field inConsultMode:Z
+      37: aload_0
+      38: iconst_0
+      39: putfield      #33                 // Field userScrolledUp:Z
+      42: return
+
+  public void initialize();
+    Code:
+       0: aload_0
+       1: invokevirtual #36                 // Method setupSpinner:()V
+       4: aload_0
+       5: invokevirtual #39                 // Method setupSmartScroll:()V
+       8: aload_0
+       9: getfield      #42                 // Field openBrowserButton:Ljavafx/scene/control/Button;
+      12: ifnull        23
+      15: aload_0
+      16: getfield      #42                 // Field openBrowserButton:Ljavafx/scene/control/Button;
+      19: iconst_1
+      20: invokevirtual #46                 // Method javafx/scene/control/Button.setDisable:(Z)V
+      23: aload_0
+      24: getfield      #52                 // Field consultLabel:Ljavafx/scene/control/Label;
+      27: ifnull        38
+      30: aload_0
+      31: getfield      #52                 // Field consultLabel:Ljavafx/scene/control/Label;
+      34: iconst_0
+      35: invokevirtual #56                 // Method javafx/scene/control/Label.setVisible:(Z)V
+      38: return
+
+  private void setupSpinner();
+    Code:
+       0: aload_0
+       1: getfield      #61                 // Field spinnerArc:Ljavafx/scene/shape/Arc;
+       4: ifnonnull     8
+       7: return
+       8: aload_0
+       9: getfield      #61                 // Field spinnerArc:Ljavafx/scene/shape/Arc;
+      12: iconst_0
+      13: invokevirtual #65                 // Method javafx/scene/shape/Arc.setVisible:(Z)V
+      16: aload_0
+      17: new           #68                 // class javafx/animation/RotateTransition
+      20: dup
+      21: ldc2_w        #70                 // double 900.0d
+      24: invokestatic  #72                 // Method javafx/util/Duration.millis:(D)Ljavafx/util/Duration;
+      27: aload_0
+      28: getfield      #61                 // Field spinnerArc:Ljavafx/scene/shape/Arc;
+      31: invokespecial #78                 // Method javafx/animation/RotateTransition."<init>":(Ljavafx/util/Duration;Ljavafx/scene/Node;)V
+      34: putfield      #81                 // Field spinnerAnim:Ljavafx/animation/RotateTransition;
+      37: aload_0
+      38: getfield      #81                 // Field spinnerAnim:Ljavafx/animation/RotateTransition;
+      41: ldc2_w        #85                 // double 360.0d
+      44: invokevirtual #87                 // Method javafx/animation/RotateTransition.setByAngle:(D)V
+      47: aload_0
+      48: getfield      #81                 // Field spinnerAnim:Ljavafx/animation/RotateTransition;
+      51: iconst_m1
+      52: invokevirtual #91                 // Method javafx/animation/RotateTransition.setCycleCount:(I)V
+      55: aload_0
+      56: getfield      #81                 // Field spinnerAnim:Ljavafx/animation/RotateTransition;
+      59: getstatic     #94                 // Field javafx/animation/Interpolator.LINEAR:Ljavafx/animation/Interpolator;
+      62: invokevirtual #100                // Method javafx/animation/RotateTransition.setInterpolator:(Ljavafx/animation/Interpolator;)V
+      65: return
+
+  private void showSpinner(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokedynamic #104,  0            // InvokeDynamic #0:run:(Lcom/forge/aiteam/MainController;Z)Ljava/lang/Runnable;
+       7: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+      10: return
+
+  private void setupSmartScroll();
+    Code:
+       0: aload_0
+       1: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+       4: ifnonnull     8
+       7: return
+       8: aload_0
+       9: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+      12: invokevirtual #118                // Method javafx/scene/control/TextArea.skinProperty:()Ljavafx/beans/property/ObjectProperty;
+      15: aload_0
+      16: invokedynamic #124,  0            // InvokeDynamic #1:changed:(Lcom/forge/aiteam/MainController;)Ljavafx/beans/value/ChangeListener;
+      21: invokevirtual #128                // Method javafx/beans/property/ObjectProperty.addListener:(Ljavafx/beans/value/ChangeListener;)V
+      24: return
+
+  private void updateUI(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokedynamic #134,  0            // InvokeDynamic #2:run:(Lcom/forge/aiteam/MainController;Ljava/lang/String;)Ljava/lang/Runnable;
+       7: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+      10: return
+
+  private boolean checkLoop(java.lang.String, java.lang.String);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokevirtual #137                // Method java/lang/String.hashCode:()I
+       5: invokestatic  #143                // Method java/lang/Integer.toHexString:(I)Ljava/lang/String;
+       8: invokedynamic #149,  0            // InvokeDynamic #3:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      13: astore_3
+      14: aload_0
+      15: getfield      #16                 // Field loopCounter:Ljava/util/Map;
+      18: aload_3
+      19: iconst_1
+      20: invokestatic  #153                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+      23: invokedynamic #157,  0            // InvokeDynamic #4:apply:()Ljava/util/function/BiFunction;
+      28: invokeinterface #161,  4          // InterfaceMethod java/util/Map.merge:(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;
+      33: checkcast     #144                // class java/lang/Integer
+      36: invokevirtual #167                // Method java/lang/Integer.intValue:()I
+      39: istore        4
+      41: iload         4
+      43: iconst_3
+      44: if_icmplt     118
+      47: aload_0
+      48: ldc           #170                // String \n? ??????????????????????????????????????????????????????
+      50: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      53: aload_0
+      54: aload_1
+      55: iload         4
+      57: invokedynamic #176,  0            // InvokeDynamic #5:makeConcatWithConstants:(Ljava/lang/String;I)Ljava/lang/String;
+      62: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      65: aload_0
+      66: aload_2
+      67: invokevirtual #179                // Method java/lang/String.length:()I
+      70: sipush        500
+      73: if_icmple     92
+      76: aload_2
+      77: iconst_0
+      78: sipush        500
+      81: invokevirtual #182                // Method java/lang/String.substring:(II)Ljava/lang/String;
+      84: invokedynamic #186,  0            // InvokeDynamic #6:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      89: goto          93
+      92: aload_2
+      93: invokedynamic #189,  0            // InvokeDynamic #7:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      98: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     101: aload_0
+     102: ldc           #190                // String    ??????????????????????????????????????????????????????\n
+     104: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     107: aload_0
+     108: getfield      #16                 // Field loopCounter:Ljava/util/Map;
+     111: invokeinterface #192,  1          // InterfaceMethod java/util/Map.clear:()V
+     116: iconst_1
+     117: ireturn
+     118: iconst_0
+     119: ireturn
+
+  private java.lang.String enterConsultMode(java.lang.String, java.lang.String) throws java.lang.InterruptedException;
+    Code:
+       0: aload_0
+       1: iconst_1
+       2: putfield      #29                 // Field inConsultMode:Z
+       5: aload_0
+       6: getfield      #25                 // Field waitForConsult:Ljava/util/concurrent/BlockingQueue;
+       9: invokeinterface #195,  1          // InterfaceMethod java/util/concurrent/BlockingQueue.clear:()V
+      14: aload_0
+      15: invokedynamic #198,  0            // InvokeDynamic #8:run:(Lcom/forge/aiteam/MainController;)Ljava/lang/Runnable;
+      20: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+      23: aload_0
+      24: ldc           #201                // String \n\n? ??????????????????????????????????????????????????????
+      26: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      29: aload_1
+      30: ldc           #203                // String REVIEW
+      32: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      35: ifne          47
+      38: aload_1
+      39: ldc           #209                // String CONSULT
+      41: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      44: ifeq          60
+      47: aload_0
+      48: aload_1
+      49: invokedynamic #211,  0            // InvokeDynamic #9:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      54: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      57: goto          70
+      60: aload_0
+      61: aload_1
+      62: invokedynamic #212,  0            // InvokeDynamic #10:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      67: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      70: aload_0
+      71: aload_2
+      72: invokevirtual #179                // Method java/lang/String.length:()I
+      75: sipush        500
+      78: if_icmple     97
+      81: aload_2
+      82: iconst_0
+      83: sipush        500
+      86: invokevirtual #182                // Method java/lang/String.substring:(II)Ljava/lang/String;
+      89: invokedynamic #186,  0            // InvokeDynamic #6:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      94: goto          98
+      97: aload_2
+      98: invokedynamic #213,  0            // InvokeDynamic #11:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     103: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     106: aload_0
+     107: ldc           #214                // String    The pipeline is PAUSED. Your execution context is preserved.
+     109: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     112: new           #216                // class java/util/ArrayList
+     115: dup
+     116: invokespecial #218                // Method java/util/ArrayList."<init>":()V
+     119: astore_3
+     120: ldc           #219                // String \\[CHOICE:\\s*([^\\]]+)\\]
+     122: iconst_2
+     123: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+     126: aload_2
+     127: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+     130: astore        4
+     132: aload         4
+     134: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+     137: ifeq          159
+     140: aload_3
+     141: aload         4
+     143: iconst_1
+     144: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+     147: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     150: invokeinterface #244,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     155: pop
+     156: goto          132
+     159: aload_3
+     160: invokeinterface #250,  1          // InterfaceMethod java/util/List.isEmpty:()Z
+     165: ifne          188
+     168: aload_0
+     169: aload_3
+     170: invokedynamic #253,  0            // InvokeDynamic #12:run:(Lcom/forge/aiteam/MainController;Ljava/util/List;)Ljava/lang/Runnable;
+     175: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+     178: aload_0
+     179: ldc_w         #256                // String    ? Select one or more options below and press Send.
+     182: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     185: goto          195
+     188: aload_0
+     189: ldc_w         #258                // String    ? Type your guidance or a manual fix in the input field and press Send.
+     192: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     195: aload_0
+     196: ldc_w         #260                // String ??????????????????????????????????????????????????????????\n
+     199: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     202: aload_0
+     203: iconst_0
+     204: invokevirtual #262                // Method showSpinner:(Z)V
+     207: aload_0
+     208: getfield      #25                 // Field waitForConsult:Ljava/util/concurrent/BlockingQueue;
+     211: invokeinterface #265,  1          // InterfaceMethod java/util/concurrent/BlockingQueue.take:()Ljava/lang/Object;
+     216: checkcast     #138                // class java/lang/String
+     219: astore        5
+     221: aload_0
+     222: iconst_0
+     223: putfield      #29                 // Field inConsultMode:Z
+     226: aload_0
+     227: iconst_1
+     228: invokevirtual #262                // Method showSpinner:(Z)V
+     231: aload_0
+     232: invokedynamic #269,  0            // InvokeDynamic #13:run:(Lcom/forge/aiteam/MainController;)Ljava/lang/Runnable;
+     237: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+     240: aload_0
+     241: aload         5
+     243: invokedynamic #270,  0            // InvokeDynamic #14:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     248: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     251: aload         5
+     253: areturn
+
+  private java.lang.String askAgentResilient(com.forge.aiteam.GeminiService, java.lang.String, java.lang.String, java.lang.String) throws java.lang.InterruptedException;
+    Code:
+       0: iconst_0
+       1: istore        5
+       3: iinc          5, 1
+       6: aload_0
+       7: iconst_1
+       8: invokevirtual #262                // Method showSpinner:(Z)V
+      11: aload_1
+      12: aload_3
+      13: aload         4
+      15: invokevirtual #271                // Method com/forge/aiteam/GeminiService.askAgent:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      18: astore        6
+      20: goto          71
+      23: astore        7
+      25: aload_0
+      26: iconst_0
+      27: invokevirtual #262                // Method showSpinner:(Z)V
+      30: aload_0
+      31: aload         7
+      33: invokevirtual #278                // Method java/lang/IllegalStateException.getMessage:()Ljava/lang/String;
+      36: invokedynamic #281,  0            // InvokeDynamic #15:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      41: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      44: aload_0
+      45: ldc_w         #282                // String    ? Open ?? Settings and paste a valid Gemini API key, then try again.
+      48: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      51: new           #284                // class java/lang/RuntimeException
+      54: dup
+      55: aload         7
+      57: invokevirtual #278                // Method java/lang/IllegalStateException.getMessage:()Ljava/lang/String;
+      60: invokedynamic #286,  0            // InvokeDynamic #16:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      65: aload         7
+      67: invokespecial #287                // Method java/lang/RuntimeException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      70: athrow
+      71: aload_0
+      72: iconst_0
+      73: invokevirtual #262                // Method showSpinner:(Z)V
+      76: aload         6
+      78: ifnull        89
+      81: aload         6
+      83: invokevirtual #290                // Method java/lang/String.isBlank:()Z
+      86: ifeq          102
+      89: aload_0
+      90: aload_2
+      91: invokedynamic #293,  0            // InvokeDynamic #17:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      96: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      99: goto          3
+     102: aload         6
+     104: ldc_w         #294                // String No Gemini API key configured
+     107: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     110: ifne          135
+     113: aload         6
+     115: ldc_w         #296                // String No Gemini API keys configured
+     118: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     121: ifne          135
+     124: aload         6
+     126: ldc_w         #298                // String All API keys are invalid
+     129: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     132: ifeq          139
+     135: iconst_1
+     136: goto          140
+     139: iconst_0
+     140: istore        7
+     142: iload         7
+     144: ifeq          176
+     147: aload_0
+     148: ldc_w         #300                // String \n? FATAL: API key missing or all keys are invalid.
+     151: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     154: aload_0
+     155: ldc_w         #302                // String    ? Open ?? Settings and paste your Gemini API key, then try again.
+     158: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     161: new           #284                // class java/lang/RuntimeException
+     164: dup
+     165: aload         6
+     167: invokedynamic #286,  0            // InvokeDynamic #16:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     172: invokespecial #304                // Method java/lang/RuntimeException."<init>":(Ljava/lang/String;)V
+     175: athrow
+     176: aload         6
+     178: ldc_w         #306                // String AI communication failed
+     181: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     184: ifne          232
+     187: aload_0
+     188: aload_2
+     189: aload         6
+     191: invokevirtual #312                // Method checkLoop:(Ljava/lang/String;Ljava/lang/String;)Z
+     194: ifeq          229
+     197: aload_0
+     198: aload_2
+     199: aload         6
+     201: invokevirtual #316                // Method enterConsultMode:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     204: astore        8
+     206: aload         4
+     208: aload         8
+     210: invokedynamic #319,  0            // InvokeDynamic #18:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     215: astore        4
+     217: aload_0
+     218: getfield      #16                 // Field loopCounter:Ljava/util/Map;
+     221: invokeinterface #192,  1          // InterfaceMethod java/util/Map.clear:()V
+     226: goto          3
+     229: aload         6
+     231: areturn
+     232: aload         6
+     234: ldc_w         #320                // String 429
+     237: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     240: ifne          257
+     243: aload         6
+     245: invokevirtual #322                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     248: ldc_w         #325                // String quota
+     251: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     254: ifeq          261
+     257: iconst_1
+     258: goto          262
+     261: iconst_0
+     262: istore        8
+     264: aload         6
+     266: ldc_w         #327                // String 503
+     269: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     272: ifne          297
+     275: aload         6
+     277: ldc_w         #329                // String 500
+     280: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     283: ifne          297
+     286: aload         6
+     288: ldc_w         #331                // String overloaded
+     291: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     294: ifeq          301
+     297: iconst_1
+     298: goto          302
+     301: iconst_0
+     302: istore        9
+     304: iload         8
+     306: ifne          314
+     309: iload         9
+     311: ifeq          421
+     314: iload         8
+     316: ifeq          325
+     319: ldc2_w        #333                // long 65000l
+     322: goto          344
+     325: ldc2_w        #335                // double 2.0d
+     328: iload         5
+     330: bipush        6
+     332: invokestatic  #337                // Method java/lang/Math.min:(II)I
+     335: i2d
+     336: invokestatic  #343                // Method java/lang/Math.pow:(DD)D
+     339: d2l
+     340: ldc2_w        #347                // long 1000l
+     343: lmul
+     344: lstore        10
+     346: ldc_w         #349                // String retry in ([\\d\\.]+)s
+     349: invokestatic  #351                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;)Ljava/util/regex/Pattern;
+     352: aload         6
+     354: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+     357: astore        12
+     359: aload         12
+     361: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+     364: ifeq          392
+     367: aload         12
+     369: iconst_1
+     370: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+     373: invokestatic  #354                // Method java/lang/Double.parseDouble:(Ljava/lang/String;)D
+     376: ldc2_w        #360                // double 1000.0d
+     379: dmul
+     380: d2l
+     381: ldc2_w        #362                // long 2000l
+     384: ladd
+     385: lstore        10
+     387: goto          392
+     390: astore        13
+     392: lload         10
+     394: lstore        13
+     396: aload_0
+     397: iload         5
+     399: lload         13
+     401: ldc2_w        #347                // long 1000l
+     404: ldiv
+     405: invokedynamic #366,  0            // InvokeDynamic #19:makeConcatWithConstants:(IJ)Ljava/lang/String;
+     410: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     413: lload         10
+     415: invokestatic  #369                // Method java/lang/Thread.sleep:(J)V
+     418: goto          447
+     421: aload_0
+     422: aload         6
+     424: invokedynamic #375,  0            // InvokeDynamic #20:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     429: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     432: new           #284                // class java/lang/RuntimeException
+     435: dup
+     436: aload         6
+     438: invokedynamic #376,  0            // InvokeDynamic #21:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     443: invokespecial #304                // Method java/lang/RuntimeException."<init>":(Ljava/lang/String;)V
+     446: athrow
+     447: goto          3
+    Exception table:
+       from    to  target type
+          11    20    23   Class java/lang/IllegalStateException
+         367   387   390   Class java/lang/NumberFormatException
+
+  private java.lang.String runParallelCoding(com.forge.aiteam.GeminiService, java.lang.String, java.lang.String) throws java.lang.Exception;
+    Code:
+       0: aload_3
+       1: ldc_w         #377                // String (?=\\[SUBTASK\\s*\\d+\\])
+       4: invokevirtual #379                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+       7: astore        4
+       9: aload         4
+      11: arraylength
+      12: iconst_1
+      13: if_icmpgt     27
+      16: aload_0
+      17: aload_1
+      18: ldc_w         #383                // String PARALLEL_CODER
+      21: aload_2
+      22: aload_3
+      23: invokevirtual #385                // Method askAgentResilient:(Lcom/forge/aiteam/GeminiService;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      26: areturn
+      27: aload         4
+      29: arraylength
+      30: invokestatic  #389                // Method com/forge/aiteam/APIKeyManager.getInstance:()Lcom/forge/aiteam/APIKeyManager;
+      33: invokevirtual #395                // Method com/forge/aiteam/APIKeyManager.getKeyCount:()I
+      36: iconst_2
+      37: invokestatic  #398                // Method java/lang/Math.max:(II)I
+      40: invokestatic  #337                // Method java/lang/Math.min:(II)I
+      43: istore        5
+      45: iload         5
+      47: invokestatic  #401                // Method java/util/concurrent/Executors.newFixedThreadPool:(I)Ljava/util/concurrent/ExecutorService;
+      50: astore        6
+      52: new           #216                // class java/util/ArrayList
+      55: dup
+      56: invokespecial #218                // Method java/util/ArrayList."<init>":()V
+      59: astore        7
+      61: aload_0
+      62: aload         4
+      64: arraylength
+      65: iload         5
+      67: invokedynamic #407,  0            // InvokeDynamic #22:makeConcatWithConstants:(II)Ljava/lang/String;
+      72: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      75: aload         4
+      77: astore        8
+      79: aload         8
+      81: arraylength
+      82: istore        9
+      84: iconst_0
+      85: istore        10
+      87: iload         10
+      89: iload         9
+      91: if_icmpge     149
+      94: aload         8
+      96: iload         10
+      98: aaload
+      99: astore        11
+     101: aload         11
+     103: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     106: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+     109: ifeq          115
+     112: goto          143
+     115: aload         11
+     117: astore        12
+     119: aload         7
+     121: aload         6
+     123: aload_0
+     124: aload_2
+     125: aload         12
+     127: invokedynamic #410,  0            // InvokeDynamic #23:call:(Lcom/forge/aiteam/MainController;Ljava/lang/String;Ljava/lang/String;)Ljava/util/concurrent/Callable;
+     132: invokeinterface #414,  2          // InterfaceMethod java/util/concurrent/ExecutorService.submit:(Ljava/util/concurrent/Callable;)Ljava/util/concurrent/Future;
+     137: invokeinterface #244,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     142: pop
+     143: iinc          10, 1
+     146: goto          87
+     149: aload         6
+     151: invokeinterface #420,  1          // InterfaceMethod java/util/concurrent/ExecutorService.shutdown:()V
+     156: aload         6
+     158: ldc2_w        #423                // long 10l
+     161: getstatic     #425                // Field java/util/concurrent/TimeUnit.MINUTES:Ljava/util/concurrent/TimeUnit;
+     164: invokeinterface #431,  4          // InterfaceMethod java/util/concurrent/ExecutorService.awaitTermination:(JLjava/util/concurrent/TimeUnit;)Z
+     169: pop
+     170: new           #435                // class java/lang/StringBuilder
+     173: dup
+     174: invokespecial #437                // Method java/lang/StringBuilder."<init>":()V
+     177: astore        8
+     179: aload         7
+     181: invokeinterface #438,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+     186: astore        9
+     188: aload         9
+     190: invokeinterface #442,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+     195: ifeq          257
+     198: aload         9
+     200: invokeinterface #447,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     205: checkcast     #450                // class java/util/concurrent/Future
+     208: astore        10
+     210: aload         8
+     212: aload         10
+     214: invokeinterface #452,  1          // InterfaceMethod java/util/concurrent/Future.get:()Ljava/lang/Object;
+     219: checkcast     #138                // class java/lang/String
+     222: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     225: ldc_w         #459                // String \n
+     228: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     231: pop
+     232: goto          254
+     235: astore        11
+     237: aload_0
+     238: aload         11
+     240: invokevirtual #463                // Method java/util/concurrent/ExecutionException.getCause:()Ljava/lang/Throwable;
+     243: invokevirtual #467                // Method java/lang/Throwable.getMessage:()Ljava/lang/String;
+     246: invokedynamic #470,  0            // InvokeDynamic #24:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     251: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     254: goto          188
+     257: aload         8
+     259: invokevirtual #471                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     262: areturn
+    Exception table:
+       from    to  target type
+         210   232   235   Class java/util/concurrent/ExecutionException
+
+  private java.lang.String detectProjectType(java.lang.String);
+    Code:
+       0: ldc_w         #474                // String \\[TYPE:\\s*(\\w+)\\]
+       3: iconst_2
+       4: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+       7: aload_1
+       8: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+      11: astore_2
+      12: aload_2
+      13: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+      16: ifeq          56
+      19: aload_2
+      20: iconst_1
+      21: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+      24: invokevirtual #476                // Method java/lang/String.toUpperCase:()Ljava/lang/String;
+      27: astore_3
+      28: aload_3
+      29: ldc_w         #479                // String WEB
+      32: invokevirtual #481                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      35: ifeq          42
+      38: ldc_w         #479                // String WEB
+      41: areturn
+      42: aload_3
+      43: ldc_w         #484                // String REACT
+      46: invokevirtual #481                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      49: ifeq          56
+      52: ldc_w         #484                // String REACT
+      55: areturn
+      56: ldc_w         #486                // String JAVA
+      59: areturn
+
+  protected void onHelpButtonClick();
+    Code:
+       0: new           #488                // class javafx/scene/control/Alert
+       3: dup
+       4: getstatic     #490                // Field javafx/scene/control/Alert$AlertType.INFORMATION:Ljavafx/scene/control/Alert$AlertType;
+       7: invokespecial #496                // Method javafx/scene/control/Alert."<init>":(Ljavafx/scene/control/Alert$AlertType;)V
+      10: astore_1
+      11: aload_1
+      12: ldc_w         #499                // String How to Use Brain AI
+      15: invokevirtual #501                // Method javafx/scene/control/Alert.setTitle:(Ljava/lang/String;)V
+      18: aload_1
+      19: ldc_w         #504                // String Welcome to the AI Assembly Line!
+      22: invokevirtual #506                // Method javafx/scene/control/Alert.setHeaderText:(Ljava/lang/String;)V
+      25: aload_1
+      26: ldc_w         #509                // String Supports Java desktop apps AND web projects.\n\nJava example: \'Write a Swing prime calculator app\'\nWeb example:  \'Build a to-do list as a web page with local storage\'\nNode example: \'Create a Node.js REST API with Express for a book list\'\n\nThe Architect auto-detects the type. The correct Coder,\nTester, and DevOps agents then run automatically.\n\nAfter a web build, click \'?\' to preview it.\n\n? TIP: Add multiple API keys in Settings for faster parallel processing!
+      29: invokevirtual #511                // Method javafx/scene/control/Alert.setContentText:(Ljava/lang/String;)V
+      32: aload_1
+      33: invokevirtual #514                // Method javafx/scene/control/Alert.showAndWait:()Ljava/util/Optional;
+      36: pop
+      37: return
+
+  protected void onLoadProjectButtonClick();
+    Code:
+       0: new           #518                // class javafx/stage/DirectoryChooser
+       3: dup
+       4: invokespecial #520                // Method javafx/stage/DirectoryChooser."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: ldc_w         #521                // String Select Brain AI Project Folder
+      12: invokevirtual #523                // Method javafx/stage/DirectoryChooser.setTitle:(Ljava/lang/String;)V
+      15: new           #524                // class java/io/File
+      18: dup
+      19: getstatic     #526                // Field PROJECTS_ROOT:Ljava/lang/String;
+      22: invokespecial #529                // Method java/io/File."<init>":(Ljava/lang/String;)V
+      25: astore_2
+      26: aload_2
+      27: invokevirtual #530                // Method java/io/File.exists:()Z
+      30: ifeq          38
+      33: aload_1
+      34: aload_2
+      35: invokevirtual #533                // Method javafx/stage/DirectoryChooser.setInitialDirectory:(Ljava/io/File;)V
+      38: aload_1
+      39: aload_0
+      40: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      43: invokevirtual #541                // Method javafx/scene/control/TextField.getScene:()Ljavafx/scene/Scene;
+      46: invokevirtual #547                // Method javafx/scene/Scene.getWindow:()Ljavafx/stage/Window;
+      49: invokevirtual #553                // Method javafx/stage/DirectoryChooser.showDialog:(Ljavafx/stage/Window;)Ljava/io/File;
+      52: astore_3
+      53: aload_3
+      54: ifnull        97
+      57: aload_0
+      58: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      61: aload_3
+      62: invokevirtual #557                // Method java/io/File.getAbsolutePath:()Ljava/lang/String;
+      65: invokedynamic #560,  0            // InvokeDynamic #25:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      70: invokevirtual #561                // Method javafx/scene/control/TextField.setText:(Ljava/lang/String;)V
+      73: aload_0
+      74: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      77: invokevirtual #564                // Method javafx/scene/control/TextField.requestFocus:()V
+      80: aload_0
+      81: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      84: aload_0
+      85: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      88: invokevirtual #567                // Method javafx/scene/control/TextField.getText:()Ljava/lang/String;
+      91: invokevirtual #179                // Method java/lang/String.length:()I
+      94: invokevirtual #570                // Method javafx/scene/control/TextField.positionCaret:(I)V
+      97: return
+
+  protected void onClearButtonClick();
+    Code:
+       0: aload_0
+       1: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+       4: invokevirtual #573                // Method javafx/scene/control/TextArea.clear:()V
+       7: aload_0
+       8: aconst_null
+       9: putfield      #7                  // Field lastWebProjectPath:Ljava/lang/String;
+      12: aload_0
+      13: getfield      #16                 // Field loopCounter:Ljava/util/Map;
+      16: invokeinterface #192,  1          // InterfaceMethod java/util/Map.clear:()V
+      21: aload_0
+      22: iconst_0
+      23: putfield      #33                 // Field userScrolledUp:Z
+      26: aload_0
+      27: ldc_w         #574                // String ? Engine cleared and ready...\n
+      30: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      33: aload_0
+      34: getfield      #42                 // Field openBrowserButton:Ljavafx/scene/control/Button;
+      37: ifnull        48
+      40: aload_0
+      41: getfield      #42                 // Field openBrowserButton:Ljavafx/scene/control/Button;
+      44: iconst_1
+      45: invokevirtual #46                 // Method javafx/scene/control/Button.setDisable:(Z)V
+      48: return
+
+  protected void onSettingsButtonClick();
+    Code:
+       0: new           #576                // class javafx/scene/control/Dialog
+       3: dup
+       4: invokespecial #578                // Method javafx/scene/control/Dialog."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: ldc_w         #579                // String Brain AI ù Settings
+      12: invokevirtual #581                // Method javafx/scene/control/Dialog.setTitle:(Ljava/lang/String;)V
+      15: aload_1
+      16: ldc_w         #582                // String Configure API Keys and Model.\nAdd multiple keys separated by commas for parallel processing.
+      19: invokevirtual #584                // Method javafx/scene/control/Dialog.setHeaderText:(Ljava/lang/String;)V
+      22: new           #585                // class javafx/scene/control/ButtonType
+      25: dup
+      26: ldc_w         #587                // String Save
+      29: getstatic     #589                // Field javafx/scene/control/ButtonBar$ButtonData.OK_DONE:Ljavafx/scene/control/ButtonBar$ButtonData;
+      32: invokespecial #595                // Method javafx/scene/control/ButtonType."<init>":(Ljava/lang/String;Ljavafx/scene/control/ButtonBar$ButtonData;)V
+      35: astore_2
+      36: aload_1
+      37: invokevirtual #598                // Method javafx/scene/control/Dialog.getDialogPane:()Ljavafx/scene/control/DialogPane;
+      40: invokevirtual #602                // Method javafx/scene/control/DialogPane.getButtonTypes:()Ljavafx/collections/ObservableList;
+      43: iconst_2
+      44: anewarray     #585                // class javafx/scene/control/ButtonType
+      47: dup
+      48: iconst_0
+      49: aload_2
+      50: aastore
+      51: dup
+      52: iconst_1
+      53: getstatic     #608                // Field javafx/scene/control/ButtonType.CANCEL:Ljavafx/scene/control/ButtonType;
+      56: aastore
+      57: invokeinterface #612,  2          // InterfaceMethod javafx/collections/ObservableList.addAll:([Ljava/lang/Object;)Z
+      62: pop
+      63: new           #618                // class javafx/scene/layout/VBox
+      66: dup
+      67: ldc2_w        #620                // double 12.0d
+      70: invokespecial #622                // Method javafx/scene/layout/VBox."<init>":(D)V
+      73: astore_3
+      74: aload_3
+      75: new           #624                // class javafx/geometry/Insets
+      78: dup
+      79: ldc2_w        #626                // double 20.0d
+      82: invokespecial #628                // Method javafx/geometry/Insets."<init>":(D)V
+      85: invokevirtual #629                // Method javafx/scene/layout/VBox.setPadding:(Ljavafx/geometry/Insets;)V
+      88: aload_3
+      89: ldc2_w        #633                // double 500.0d
+      92: invokevirtual #635                // Method javafx/scene/layout/VBox.setMinWidth:(D)V
+      95: new           #57                 // class javafx/scene/control/Label
+      98: dup
+      99: ldc_w         #638                // String Gemini API Keys (comma-separated for multiple keys):
+     102: invokespecial #640                // Method javafx/scene/control/Label."<init>":(Ljava/lang/String;)V
+     105: astore        4
+     107: aload         4
+     109: ldc_w         #641                // String -fx-font-weight: bold;
+     112: invokevirtual #643                // Method javafx/scene/control/Label.setStyle:(Ljava/lang/String;)V
+     115: invokestatic  #389                // Method com/forge/aiteam/APIKeyManager.getInstance:()Lcom/forge/aiteam/APIKeyManager;
+     118: invokevirtual #395                // Method com/forge/aiteam/APIKeyManager.getKeyCount:()I
+     121: ifle          133
+     124: invokestatic  #389                // Method com/forge/aiteam/APIKeyManager.getInstance:()Lcom/forge/aiteam/APIKeyManager;
+     127: invokevirtual #646                // Method com/forge/aiteam/APIKeyManager.getKeysCsv:()Ljava/lang/String;
+     130: goto          142
+     133: ldc_w         #649                // String BRAIN_API_KEY
+     136: ldc_w         #651                // String
+     139: invokestatic  #653                // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     142: astore        5
+     144: new           #119                // class javafx/scene/control/TextArea
+     147: dup
+     148: aload         5
+     150: invokespecial #658                // Method javafx/scene/control/TextArea."<init>":(Ljava/lang/String;)V
+     153: astore        6
+     155: aload         6
+     157: ldc_w         #659                // String AIza...key1, AIza...key2, AIza...key3
+     160: invokevirtual #661                // Method javafx/scene/control/TextArea.setPromptText:(Ljava/lang/String;)V
+     163: aload         6
+     165: ldc2_w        #664                // double 480.0d
+     168: invokevirtual #666                // Method javafx/scene/control/TextArea.setPrefWidth:(D)V
+     171: aload         6
+     173: iconst_3
+     174: invokevirtual #669                // Method javafx/scene/control/TextArea.setPrefRowCount:(I)V
+     177: aload         6
+     179: iconst_1
+     180: invokevirtual #672                // Method javafx/scene/control/TextArea.setWrapText:(Z)V
+     183: new           #675                // class javafx/scene/control/Hyperlink
+     186: dup
+     187: ldc_w         #677                // String Get a free key at aistudio.google.com
+     190: invokespecial #679                // Method javafx/scene/control/Hyperlink."<init>":(Ljava/lang/String;)V
+     193: astore        7
+     195: aload         7
+     197: invokedynamic #680,  0            // InvokeDynamic #26:handle:()Ljavafx/event/EventHandler;
+     202: invokevirtual #684                // Method javafx/scene/control/Hyperlink.setOnAction:(Ljavafx/event/EventHandler;)V
+     205: new           #57                 // class javafx/scene/control/Label
+     208: dup
+     209: ldc_w         #688                // String Key Pool Status:
+     212: invokespecial #640                // Method javafx/scene/control/Label."<init>":(Ljava/lang/String;)V
+     215: astore        8
+     217: aload         8
+     219: ldc_w         #641                // String -fx-font-weight: bold;
+     222: invokevirtual #643                // Method javafx/scene/control/Label.setStyle:(Ljava/lang/String;)V
+     225: new           #57                 // class javafx/scene/control/Label
+     228: dup
+     229: invokestatic  #389                // Method com/forge/aiteam/APIKeyManager.getInstance:()Lcom/forge/aiteam/APIKeyManager;
+     232: invokevirtual #690                // Method com/forge/aiteam/APIKeyManager.getStatusSummary:()Ljava/lang/String;
+     235: invokespecial #640                // Method javafx/scene/control/Label."<init>":(Ljava/lang/String;)V
+     238: astore        9
+     240: aload         9
+     242: ldc_w         #693                // String -fx-font-size: 11px; -fx-text-fill: #333;
+     245: invokevirtual #643                // Method javafx/scene/control/Label.setStyle:(Ljava/lang/String;)V
+     248: aload         9
+     250: iconst_1
+     251: invokevirtual #695                // Method javafx/scene/control/Label.setWrapText:(Z)V
+     254: new           #57                 // class javafx/scene/control/Label
+     257: dup
+     258: ldc_w         #696                // String Gemini Model:
+     261: invokespecial #640                // Method javafx/scene/control/Label."<init>":(Ljava/lang/String;)V
+     264: astore        10
+     266: aload         10
+     268: ldc_w         #641                // String -fx-font-weight: bold;
+     271: invokevirtual #643                // Method javafx/scene/control/Label.setStyle:(Ljava/lang/String;)V
+     274: new           #698                // class javafx/scene/control/ComboBox
+     277: dup
+     278: invokespecial #700                // Method javafx/scene/control/ComboBox."<init>":()V
+     281: astore        11
+     283: ldc_w         #701                // String BRAIN_MODEL
+     286: ldc_w         #703                // String gemini-2.5-flash
+     289: invokestatic  #653                // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     292: astore        12
+     294: iconst_0
+     295: istore        13
+     297: iconst_0
+     298: istore        14
+     300: iload         14
+     302: getstatic     #705                // Field GEMINI_MODELS:[[Ljava/lang/String;
+     305: arraylength
+     306: if_icmpge     354
+     309: aload         11
+     311: invokevirtual #709                // Method javafx/scene/control/ComboBox.getItems:()Ljavafx/collections/ObservableList;
+     314: getstatic     #705                // Field GEMINI_MODELS:[[Ljava/lang/String;
+     317: iload         14
+     319: aaload
+     320: iconst_1
+     321: aaload
+     322: invokeinterface #712,  2          // InterfaceMethod javafx/collections/ObservableList.add:(Ljava/lang/Object;)Z
+     327: pop
+     328: getstatic     #705                // Field GEMINI_MODELS:[[Ljava/lang/String;
+     331: iload         14
+     333: aaload
+     334: iconst_0
+     335: aaload
+     336: aload         12
+     338: invokevirtual #481                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     341: ifeq          348
+     344: iload         14
+     346: istore        13
+     348: iinc          14, 1
+     351: goto          300
+     354: aload         11
+     356: invokevirtual #713                // Method javafx/scene/control/ComboBox.getSelectionModel:()Ljavafx/scene/control/SingleSelectionModel;
+     359: iload         13
+     361: invokevirtual #717                // Method javafx/scene/control/SingleSelectionModel.select:(I)V
+     364: aload         11
+     366: ldc2_w        #664                // double 480.0d
+     369: invokevirtual #722                // Method javafx/scene/control/ComboBox.setPrefWidth:(D)V
+     372: new           #57                 // class javafx/scene/control/Label
+     375: dup
+     376: ldc_w         #723                // String Flash is recommended for most tasks. Pro gives higher quality but may be slower.
+     379: invokespecial #640                // Method javafx/scene/control/Label."<init>":(Ljava/lang/String;)V
+     382: astore        14
+     384: aload         14
+     386: ldc_w         #725                // String -fx-font-size: 10px; -fx-text-fill: #888;
+     389: invokevirtual #643                // Method javafx/scene/control/Label.setStyle:(Ljava/lang/String;)V
+     392: aload         14
+     394: iconst_1
+     395: invokevirtual #695                // Method javafx/scene/control/Label.setWrapText:(Z)V
+     398: aload_3
+     399: invokevirtual #727                // Method javafx/scene/layout/VBox.getChildren:()Ljavafx/collections/ObservableList;
+     402: bipush        10
+     404: anewarray     #730                // class javafx/scene/Node
+     407: dup
+     408: iconst_0
+     409: aload         4
+     411: aastore
+     412: dup
+     413: iconst_1
+     414: aload         6
+     416: aastore
+     417: dup
+     418: iconst_2
+     419: aload         7
+     421: aastore
+     422: dup
+     423: iconst_3
+     424: new           #732                // class javafx/scene/control/Separator
+     427: dup
+     428: invokespecial #734                // Method javafx/scene/control/Separator."<init>":()V
+     431: aastore
+     432: dup
+     433: iconst_4
+     434: aload         8
+     436: aastore
+     437: dup
+     438: iconst_5
+     439: aload         9
+     441: aastore
+     442: dup
+     443: bipush        6
+     445: new           #732                // class javafx/scene/control/Separator
+     448: dup
+     449: invokespecial #734                // Method javafx/scene/control/Separator."<init>":()V
+     452: aastore
+     453: dup
+     454: bipush        7
+     456: aload         10
+     458: aastore
+     459: dup
+     460: bipush        8
+     462: aload         11
+     464: aastore
+     465: dup
+     466: bipush        9
+     468: aload         14
+     470: aastore
+     471: invokeinterface #612,  2          // InterfaceMethod javafx/collections/ObservableList.addAll:([Ljava/lang/Object;)Z
+     476: pop
+     477: aload_1
+     478: invokevirtual #598                // Method javafx/scene/control/Dialog.getDialogPane:()Ljavafx/scene/control/DialogPane;
+     481: aload_3
+     482: invokevirtual #735                // Method javafx/scene/control/DialogPane.setContent:(Ljavafx/scene/Node;)V
+     485: aload_1
+     486: aload_2
+     487: aload         11
+     489: aload         6
+     491: invokedynamic #739,  0            // InvokeDynamic #27:call:(Ljavafx/scene/control/ButtonType;Ljavafx/scene/control/ComboBox;Ljavafx/scene/control/TextArea;)Ljavafx/util/Callback;
+     496: invokevirtual #742                // Method javafx/scene/control/Dialog.setResultConverter:(Ljavafx/util/Callback;)V
+     499: aload_1
+     500: invokevirtual #746                // Method javafx/scene/control/Dialog.showAndWait:()Ljava/util/Optional;
+     503: aload_0
+     504: invokedynamic #747,  0            // InvokeDynamic #28:accept:(Lcom/forge/aiteam/MainController;)Ljava/util/function/Consumer;
+     509: invokevirtual #751                // Method java/util/Optional.ifPresent:(Ljava/util/function/Consumer;)V
+     512: return
+
+  protected void onOpenBrowserButtonClick();
+    Code:
+       0: aload_0
+       1: getfield      #7                  // Field lastWebProjectPath:Ljava/lang/String;
+       4: ifnonnull     15
+       7: aload_0
+       8: ldc_w         #757                // String ?? No web project built yet.
+      11: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      14: return
+      15: new           #524                // class java/io/File
+      18: dup
+      19: aload_0
+      20: getfield      #7                  // Field lastWebProjectPath:Ljava/lang/String;
+      23: ldc_w         #759                // String index.html
+      26: invokespecial #761                // Method java/io/File."<init>":(Ljava/lang/String;Ljava/lang/String;)V
+      29: astore_1
+      30: aload_1
+      31: invokevirtual #530                // Method java/io/File.exists:()Z
+      34: ifne          51
+      37: aload_0
+      38: aload_0
+      39: getfield      #7                  // Field lastWebProjectPath:Ljava/lang/String;
+      42: invokedynamic #764,  0            // InvokeDynamic #29:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      47: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      50: return
+      51: invokestatic  #765                // Method java/awt/Desktop.getDesktop:()Ljava/awt/Desktop;
+      54: aload_1
+      55: invokevirtual #771                // Method java/io/File.toURI:()Ljava/net/URI;
+      58: invokevirtual #775                // Method java/awt/Desktop.browse:(Ljava/net/URI;)V
+      61: aload_0
+      62: aload_1
+      63: invokevirtual #557                // Method java/io/File.getAbsolutePath:()Ljava/lang/String;
+      66: invokedynamic #779,  0            // InvokeDynamic #30:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      71: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      74: goto          91
+      77: astore_1
+      78: aload_0
+      79: aload_1
+      80: invokevirtual #782                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+      83: invokedynamic #783,  0            // InvokeDynamic #31:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      88: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      91: return
+    Exception table:
+       from    to  target type
+          15    50    77   Class java/lang/Exception
+          51    74    77   Class java/lang/Exception
+
+  protected void onHelloButtonClick();
+    Code:
+       0: aload_0
+       1: getfield      #29                 // Field inConsultMode:Z
+       4: ifeq          320
+       7: new           #435                // class java/lang/StringBuilder
+      10: dup
+      11: invokespecial #437                // Method java/lang/StringBuilder."<init>":()V
+      14: astore_1
+      15: aload_0
+      16: getfield      #784                // Field choicesBox:Ljavafx/scene/layout/VBox;
+      19: ifnull        118
+      22: aload_0
+      23: getfield      #784                // Field choicesBox:Ljavafx/scene/layout/VBox;
+      26: invokevirtual #727                // Method javafx/scene/layout/VBox.getChildren:()Ljavafx/collections/ObservableList;
+      29: invokeinterface #788,  1          // InterfaceMethod javafx/collections/ObservableList.isEmpty:()Z
+      34: ifne          118
+      37: aload_0
+      38: getfield      #784                // Field choicesBox:Ljavafx/scene/layout/VBox;
+      41: invokevirtual #727                // Method javafx/scene/layout/VBox.getChildren:()Ljavafx/collections/ObservableList;
+      44: invokeinterface #789,  1          // InterfaceMethod javafx/collections/ObservableList.iterator:()Ljava/util/Iterator;
+      49: astore_2
+      50: aload_2
+      51: invokeinterface #442,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      56: ifeq          118
+      59: aload_2
+      60: invokeinterface #447,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      65: checkcast     #730                // class javafx/scene/Node
+      68: astore_3
+      69: aload_3
+      70: instanceof    #790                // class javafx/scene/control/CheckBox
+      73: ifeq          115
+      76: aload_3
+      77: checkcast     #790                // class javafx/scene/control/CheckBox
+      80: astore        4
+      82: aload         4
+      84: invokevirtual #792                // Method javafx/scene/control/CheckBox.isSelected:()Z
+      87: ifeq          115
+      90: aload_1
+      91: invokevirtual #795                // Method java/lang/StringBuilder.length:()I
+      94: ifle          105
+      97: aload_1
+      98: ldc_w         #796                // String ,
+     101: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     104: pop
+     105: aload_1
+     106: aload         4
+     108: invokevirtual #798                // Method javafx/scene/control/CheckBox.getText:()Ljava/lang/String;
+     111: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     114: pop
+     115: goto          50
+     118: aload_0
+     119: getfield      #799                // Field otherInputField:Ljavafx/scene/control/TextField;
+     122: invokevirtual #567                // Method javafx/scene/control/TextField.getText:()Ljava/lang/String;
+     125: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     128: astore_2
+     129: aload_2
+     130: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+     133: ifne          157
+     136: aload_1
+     137: invokevirtual #795                // Method java/lang/StringBuilder.length:()I
+     140: ifle          151
+     143: aload_1
+     144: ldc_w         #802                // String  | Guidance:
+     147: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     150: pop
+     151: aload_1
+     152: aload_2
+     153: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     156: pop
+     157: aload_0
+     158: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+     161: invokevirtual #567                // Method javafx/scene/control/TextField.getText:()Ljava/lang/String;
+     164: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     167: astore_3
+     168: aload_3
+     169: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+     172: ifne          204
+     175: aload_3
+     176: aload_2
+     177: invokevirtual #481                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     180: ifne          204
+     183: aload_1
+     184: invokevirtual #795                // Method java/lang/StringBuilder.length:()I
+     187: ifle          198
+     190: aload_1
+     191: ldc_w         #804                // String  | Input:
+     194: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     197: pop
+     198: aload_1
+     199: aload_3
+     200: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     203: pop
+     204: aload_1
+     205: invokevirtual #471                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     208: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     211: astore        4
+     213: aload         4
+     215: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+     218: ifeq          229
+     221: aload_0
+     222: ldc_w         #806                // String ?? Please select an option or type your guidance first.
+     225: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     228: return
+     229: aload_0
+     230: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+     233: invokevirtual #808                // Method javafx/scene/control/TextField.clear:()V
+     236: aload_0
+     237: getfield      #799                // Field otherInputField:Ljavafx/scene/control/TextField;
+     240: invokevirtual #808                // Method javafx/scene/control/TextField.clear:()V
+     243: aload_0
+     244: ldc_w         #809                // String ?? Sending guidance to Brain...
+     247: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     250: aload_0
+     251: invokedynamic #811,  0            // InvokeDynamic #32:run:(Lcom/forge/aiteam/MainController;)Ljava/lang/Runnable;
+     256: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+     259: aload_0
+     260: getfield      #25                 // Field waitForConsult:Ljava/util/concurrent/BlockingQueue;
+     263: invokeinterface #195,  1          // InterfaceMethod java/util/concurrent/BlockingQueue.clear:()V
+     268: aload_0
+     269: getfield      #25                 // Field waitForConsult:Ljava/util/concurrent/BlockingQueue;
+     272: aload         4
+     274: ldc2_w        #812                // long 5l
+     277: getstatic     #814                // Field java/util/concurrent/TimeUnit.SECONDS:Ljava/util/concurrent/TimeUnit;
+     280: invokeinterface #817,  5          // InterfaceMethod java/util/concurrent/BlockingQueue.offer:(Ljava/lang/Object;JLjava/util/concurrent/TimeUnit;)Z
+     285: istore        5
+     287: iload         5
+     289: ifne          308
+     292: aload_0
+     293: ldc_w         #821                // String ?? Brain is busy or not responding (timeout). Please try again.
+     296: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     299: aload_0
+     300: invokedynamic #823,  0            // InvokeDynamic #33:run:(Lcom/forge/aiteam/MainController;)Ljava/lang/Runnable;
+     305: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+     308: goto          319
+     311: astore        5
+     313: invokestatic  #826                // Method java/lang/Thread.currentThread:()Ljava/lang/Thread;
+     316: invokevirtual #830                // Method java/lang/Thread.interrupt:()V
+     319: return
+     320: aload_0
+     321: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+     324: invokevirtual #567                // Method javafx/scene/control/TextField.getText:()Ljava/lang/String;
+     327: astore_1
+     328: aload_1
+     329: ifnull        342
+     332: aload_1
+     333: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     336: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+     339: ifeq          350
+     342: aload_0
+     343: ldc_w         #833                // String ?? Please type a task first.
+     346: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     349: return
+     350: aconst_null
+     351: astore_2
+     352: ldc_w         #835                // String \\[LOAD:\\s*(.*?)\\]
+     355: iconst_2
+     356: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+     359: aload_1
+     360: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+     363: astore_3
+     364: aload_3
+     365: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+     368: ifeq          401
+     371: aload_3
+     372: iconst_1
+     373: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+     376: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     379: astore_2
+     380: aload_3
+     381: ldc_w         #651                // String
+     384: invokevirtual #837                // Method java/util/regex/Matcher.replaceFirst:(Ljava/lang/String;)Ljava/lang/String;
+     387: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     390: astore_1
+     391: aload_0
+     392: aload_2
+     393: invokedynamic #840,  0            // InvokeDynamic #34:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     398: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     401: aload_1
+     402: astore        4
+     404: aload_2
+     405: astore        5
+     407: aconst_null
+     408: astore        6
+     410: aload_2
+     411: ifnonnull     504
+     414: new           #841                // class javafx/scene/control/TextInputDialog
+     417: dup
+     418: ldc_w         #651                // String
+     421: invokespecial #843                // Method javafx/scene/control/TextInputDialog."<init>":(Ljava/lang/String;)V
+     424: astore        7
+     426: aload         7
+     428: ldc_w         #844                // String Project Name
+     431: invokevirtual #846                // Method javafx/scene/control/TextInputDialog.setTitle:(Ljava/lang/String;)V
+     434: aload         7
+     436: ldc_w         #847                // String What do you want to name your project and website?
+     439: invokevirtual #849                // Method javafx/scene/control/TextInputDialog.setHeaderText:(Ljava/lang/String;)V
+     442: aload         7
+     444: ldc_w         #850                // String Name (leave blank to auto-generate):
+     447: invokevirtual #852                // Method javafx/scene/control/TextInputDialog.setContentText:(Ljava/lang/String;)V
+     450: aload         7
+     452: invokevirtual #853                // Method javafx/scene/control/TextInputDialog.showAndWait:()Ljava/util/Optional;
+     455: astore        8
+     457: aload         8
+     459: invokevirtual #854                // Method java/util/Optional.isPresent:()Z
+     462: ifeq          504
+     465: aload         8
+     467: invokevirtual #857                // Method java/util/Optional.get:()Ljava/lang/Object;
+     470: checkcast     #138                // class java/lang/String
+     473: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     476: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+     479: ifne          504
+     482: aload         8
+     484: invokevirtual #857                // Method java/util/Optional.get:()Ljava/lang/Object;
+     487: checkcast     #138                // class java/lang/String
+     490: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     493: ldc_w         #858                // String [^a-zA-Z0-9_\\-]
+     496: ldc_w         #860                // String -
+     499: invokevirtual #862                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     502: astore        6
+     504: aload         6
+     506: astore        7
+     508: aload_0
+     509: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+     512: ldc_w         #865                // String ? Starting AI Assembly Line...\n\n
+     515: invokevirtual #867                // Method javafx/scene/control/TextArea.setText:(Ljava/lang/String;)V
+     518: aload_0
+     519: iconst_0
+     520: putfield      #33                 // Field userScrolledUp:Z
+     523: aload_0
+     524: getfield      #16                 // Field loopCounter:Ljava/util/Map;
+     527: invokeinterface #192,  1          // InterfaceMethod java/util/Map.clear:()V
+     532: aload_0
+     533: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+     536: invokevirtual #808                // Method javafx/scene/control/TextField.clear:()V
+     539: aload_0
+     540: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+     543: ifnull        554
+     546: aload_0
+     547: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+     550: iconst_1
+     551: invokevirtual #46                 // Method javafx/scene/control/Button.setDisable:(Z)V
+     554: aload_0
+     555: getfield      #42                 // Field openBrowserButton:Ljavafx/scene/control/Button;
+     558: ifnull        569
+     561: aload_0
+     562: getfield      #42                 // Field openBrowserButton:Ljavafx/scene/control/Button;
+     565: iconst_1
+     566: invokevirtual #46                 // Method javafx/scene/control/Button.setDisable:(Z)V
+     569: new           #871                // class com/forge/aiteam/MainController$1
+     572: dup
+     573: aload_0
+     574: aload         4
+     576: aload         5
+     578: aload         7
+     580: invokespecial #873                // Method com/forge/aiteam/MainController$1."<init>":(Lcom/forge/aiteam/MainController;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+     583: astore        8
+     585: new           #370                // class java/lang/Thread
+     588: dup
+     589: aload         8
+     591: invokespecial #876                // Method java/lang/Thread."<init>":(Ljava/lang/Runnable;)V
+     594: astore        9
+     596: aload         9
+     598: iconst_1
+     599: invokevirtual #878                // Method java/lang/Thread.setDaemon:(Z)V
+     602: aload         9
+     604: invokevirtual #881                // Method java/lang/Thread.start:()V
+     607: return
+    Exception table:
+       from    to  target type
+         259   308   311   Class java/lang/InterruptedException
+
+  private void generateReadme(com.forge.aiteam.GeminiService, com.forge.aiteam.DatabaseConnection, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String) throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: ldc_w         #884                // String \n? [DevOps] Generating README...
+       4: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+       7: ldc_w         #886                // String DEVOPS
+      10: invokestatic  #888                // Method com/forge/aiteam/DatabaseConnection.getPromptByRole:(Ljava/lang/String;)Ljava/lang/String;
+      13: astore        8
+      15: aload         5
+      17: aload         6
+      19: aload         7
+      21: aload_0
+      22: aload         4
+      24: invokevirtual #893                // Method listProjectFiles:(Ljava/lang/String;)Ljava/lang/String;
+      27: invokedynamic #896,  0            // InvokeDynamic #35:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      32: astore        9
+      34: aload_0
+      35: aload_1
+      36: ldc_w         #886                // String DEVOPS
+      39: aload         8
+      41: aload         9
+      43: invokevirtual #385                // Method askAgentResilient:(Lcom/forge/aiteam/GeminiService;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      46: astore        10
+      48: ldc_w         #899                // String \\[FILE:\\s*README\\.md\\](.*?)\\[ENDFILE\\]
+      51: bipush        34
+      53: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+      56: aload         10
+      58: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+      61: astore        11
+      63: aload         11
+      65: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+      68: ifeq          83
+      71: aload         11
+      73: iconst_1
+      74: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+      77: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+      80: goto          85
+      83: aload         10
+      85: astore        12
+      87: aload         4
+      89: iconst_1
+      90: anewarray     #138                // class java/lang/String
+      93: dup
+      94: iconst_0
+      95: ldc_w         #901                // String README.md
+      98: aastore
+      99: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     102: astore        13
+     104: aload         13
+     106: aload         12
+     108: iconst_0
+     109: anewarray     #908                // class java/nio/file/OpenOption
+     112: invokestatic  #910                // Method java/nio/file/Files.writeString:(Ljava/nio/file/Path;Ljava/lang/CharSequence;[Ljava/nio/file/OpenOption;)Ljava/nio/file/Path;
+     115: pop
+     116: aload_2
+     117: iload_3
+     118: ldc_w         #886                // String DEVOPS
+     121: aload         12
+     123: invokevirtual #916                // Method com/forge/aiteam/DatabaseConnection.saveMessage:(ILjava/lang/String;Ljava/lang/String;)V
+     126: aload_0
+     127: aload         13
+     129: invokestatic  #920                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     132: invokedynamic #923,  0            // InvokeDynamic #36:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     137: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     140: return
+
+  private java.lang.String buildJavaCoderContext(java.lang.String, java.lang.String);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokedynamic #924,  0            // InvokeDynamic #37:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+       7: areturn
+
+  private java.lang.String buildWebCoderContext(java.lang.String, java.lang.String);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokedynamic #925,  0            // InvokeDynamic #38:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+       7: areturn
+
+  private java.lang.String buildReactCoderContext(java.lang.String, java.lang.String);
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokedynamic #926,  0            // InvokeDynamic #39:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+       7: areturn
+
+  private void runWebPipeline(java.lang.String, java.lang.String, java.lang.String, com.forge.aiteam.DatabaseConnection, com.forge.aiteam.GeminiService, int) throws java.lang.Exception;
+    Code:
+       0: bipush        10
+       2: istore        7
+       4: iconst_0
+       5: istore        8
+       7: iconst_0
+       8: istore        9
+      10: iload         8
+      12: iload         7
+      14: if_icmpge     198
+      17: iload         9
+      19: ifne          198
+      22: iinc          8, 1
+      25: iload         8
+      27: istore        10
+      29: aload_0
+      30: iload         10
+      32: invokedynamic #927,  0            // InvokeDynamic #40:makeConcatWithConstants:(I)Ljava/lang/String;
+      37: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      40: aload_0
+      41: aload_2
+      42: invokevirtual #929                // Method runWebValidation:(Ljava/lang/String;)V
+      45: iconst_1
+      46: istore        9
+      48: aload_0
+      49: iload         8
+      51: invokedynamic #932,  0            // InvokeDynamic #41:makeConcatWithConstants:(I)Ljava/lang/String;
+      56: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      59: aload_0
+      60: aload_2
+      61: invokedynamic #933,  0            // InvokeDynamic #42:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      66: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      69: goto          195
+      72: astore        11
+      74: iload         8
+      76: iload         7
+      78: if_icmplt     91
+      81: aload_0
+      82: ldc_w         #934                // String \n? Max web repair attempts reached.
+      85: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      88: aload         11
+      90: athrow
+      91: aload_0
+      92: ldc_w         #936                // String \n? [Web Repair] Issue found. Asking AI to fix...
+      95: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      98: aload_0
+      99: aload_2
+     100: invokevirtual #938                // Method getProjectFilesContext:(Ljava/lang/String;)Ljava/lang/String;
+     103: astore        12
+     105: aload         11
+     107: invokevirtual #782                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     110: aload         12
+     112: invokedynamic #941,  0            // InvokeDynamic #43:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     117: astore        13
+     119: aload_0
+     120: aload         5
+     122: ldc_w         #942                // String TESTER
+     125: ldc_w         #942                // String TESTER
+     128: invokestatic  #888                // Method com/forge/aiteam/DatabaseConnection.getPromptByRole:(Ljava/lang/String;)Ljava/lang/String;
+     131: aload         13
+     133: invokevirtual #385                // Method askAgentResilient:(Lcom/forge/aiteam/GeminiService;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     136: astore        14
+     138: aload         14
+     140: ldc_w         #944                // String [FILE:
+     143: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     146: ifne          159
+     149: aload_0
+     150: ldc_w         #946                // String ?? [Web Repair Guard]: No file blocks. Retrying...
+     153: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     156: goto          10
+     159: aload         4
+     161: iload         6
+     163: iload         8
+     165: invokedynamic #948,  0            // InvokeDynamic #44:makeConcatWithConstants:(I)Ljava/lang/String;
+     170: aload         14
+     172: invokevirtual #916                // Method com/forge/aiteam/DatabaseConnection.saveMessage:(ILjava/lang/String;Ljava/lang/String;)V
+     175: aload_0
+     176: aload         14
+     178: aload_2
+     179: ldc_w         #479                // String WEB
+     182: invokevirtual #949                // Method extractAndCreateFiles:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z
+     185: ifeq          195
+     188: aload_0
+     189: ldc_w         #953                // String \n?? [Web Repair Applied]: Retrying validation...
+     192: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     195: goto          10
+     198: return
+    Exception table:
+       from    to  target type
+          29    69    72   Class java/lang/Exception
+
+  private void runWebValidation(java.lang.String) throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: ldc_w         #955                // String \n? [Web DevOps] Validating web project...
+       4: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+       7: aconst_null
+       8: astore_2
+       9: iconst_2
+      10: anewarray     #138                // class java/lang/String
+      13: dup
+      14: iconst_0
+      15: ldc_w         #759                // String index.html
+      18: aastore
+      19: dup
+      20: iconst_1
+      21: ldc_w         #957                // String public/index.html
+      24: aastore
+      25: astore_3
+      26: aload_3
+      27: arraylength
+      28: istore        4
+      30: iconst_0
+      31: istore        5
+      33: iload         5
+      35: iload         4
+      37: if_icmpge     85
+      40: aload_3
+      41: iload         5
+      43: aaload
+      44: astore        6
+      46: aload_1
+      47: iconst_1
+      48: anewarray     #138                // class java/lang/String
+      51: dup
+      52: iconst_0
+      53: aload         6
+      55: aastore
+      56: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      59: astore        7
+      61: aload         7
+      63: iconst_0
+      64: anewarray     #959                // class java/nio/file/LinkOption
+      67: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+      70: ifeq          79
+      73: aload         7
+      75: astore_2
+      76: goto          85
+      79: iinc          5, 1
+      82: goto          33
+      85: aload_1
+      86: iconst_1
+      87: anewarray     #138                // class java/lang/String
+      90: dup
+      91: iconst_0
+      92: ldc_w         #964                // String server.js
+      95: aastore
+      96: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      99: iconst_0
+     100: anewarray     #959                // class java/nio/file/LinkOption
+     103: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+     106: ifeq          171
+     109: aload_1
+     110: iconst_1
+     111: anewarray     #138                // class java/lang/String
+     114: dup
+     115: iconst_0
+     116: ldc_w         #966                // String views
+     119: aastore
+     120: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     123: iconst_0
+     124: anewarray     #959                // class java/nio/file/LinkOption
+     127: invokestatic  #968                // Method java/nio/file/Files.isDirectory:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+     130: ifeq          171
+     133: aload_1
+     134: iconst_1
+     135: anewarray     #138                // class java/lang/String
+     138: dup
+     139: iconst_0
+     140: ldc_w         #966                // String views
+     143: aastore
+     144: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     147: iconst_0
+     148: anewarray     #971                // class java/nio/file/FileVisitOption
+     151: invokestatic  #973                // Method java/nio/file/Files.walk:(Ljava/nio/file/Path;[Ljava/nio/file/FileVisitOption;)Ljava/util/stream/Stream;
+     154: invokedynamic #977,  0            // InvokeDynamic #45:test:()Ljava/util/function/Predicate;
+     159: invokeinterface #981,  2          // InterfaceMethod java/util/stream/Stream.anyMatch:(Ljava/util/function/Predicate;)Z
+     164: ifeq          171
+     167: iconst_1
+     168: goto          172
+     171: iconst_0
+     172: istore_3
+     173: aload_2
+     174: ifnonnull     195
+     177: iload_3
+     178: ifne          195
+     181: new           #780                // class java/lang/Exception
+     184: dup
+     185: aload_1
+     186: invokedynamic #987,  0            // InvokeDynamic #46:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     191: invokespecial #988                // Method java/lang/Exception."<init>":(Ljava/lang/String;)V
+     194: athrow
+     195: aload_2
+     196: ifnull        596
+     199: aload_0
+     200: aload_2
+     201: invokestatic  #920                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     204: invokedynamic #989,  0            // InvokeDynamic #47:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     209: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     212: aload_2
+     213: invokestatic  #990                // Method java/nio/file/Files.readString:(Ljava/nio/file/Path;)Ljava/lang/String;
+     216: astore        4
+     218: aload_1
+     219: iconst_1
+     220: anewarray     #138                // class java/lang/String
+     223: dup
+     224: iconst_0
+     225: ldc_w         #994                // String public
+     228: aastore
+     229: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     232: astore        5
+     234: aload_2
+     235: invokeinterface #996,  1          // InterfaceMethod java/nio/file/Path.getParent:()Ljava/nio/file/Path;
+     240: astore        6
+     242: ldc_w         #1002               // String (?:src|href)=[\"\']([^\"\']+)[\"\']
+     245: iconst_2
+     246: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+     249: astore        7
+     251: aload         7
+     253: aload         4
+     255: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+     258: astore        8
+     260: new           #435                // class java/lang/StringBuilder
+     263: dup
+     264: invokespecial #437                // Method java/lang/StringBuilder."<init>":()V
+     267: astore        9
+     269: aload         8
+     271: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+     274: ifeq          551
+     277: aload         8
+     279: iconst_1
+     280: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+     283: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     286: astore        10
+     288: aload         10
+     290: ldc_w         #1004               // String http
+     293: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     296: ifne          269
+     299: aload         10
+     301: ldc_w         #1006               // String //
+     304: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     307: ifne          269
+     310: aload         10
+     312: ldc_w         #1008               // String #
+     315: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     318: ifne          269
+     321: aload         10
+     323: ldc_w         #1010               // String data:
+     326: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     329: ifeq          335
+     332: goto          269
+     335: aload         10
+     337: ldc_w         #1012               // String ?
+     340: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     343: ifeq          362
+     346: aload         10
+     348: iconst_0
+     349: aload         10
+     351: bipush        63
+     353: invokevirtual #1014               // Method java/lang/String.indexOf:(I)I
+     356: invokevirtual #182                // Method java/lang/String.substring:(II)Ljava/lang/String;
+     359: goto          364
+     362: aload         10
+     364: astore        11
+     366: aload         11
+     368: ldc_w         #1008               // String #
+     371: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     374: ifeq          392
+     377: aload         11
+     379: iconst_0
+     380: aload         11
+     382: bipush        35
+     384: invokevirtual #1014               // Method java/lang/String.indexOf:(I)I
+     387: invokevirtual #182                // Method java/lang/String.substring:(II)Ljava/lang/String;
+     390: astore        11
+     392: aload         11
+     394: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+     397: ifeq          403
+     400: goto          269
+     403: aload         11
+     405: ldc_w         #1018               // String /
+     408: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     411: ifeq          474
+     414: aload         11
+     416: iconst_1
+     417: invokevirtual #1020               // Method java/lang/String.substring:(I)Ljava/lang/String;
+     420: astore        13
+     422: aload         5
+     424: aload         13
+     426: invokeinterface #1022,  2         // InterfaceMethod java/nio/file/Path.resolve:(Ljava/lang/String;)Ljava/nio/file/Path;
+     431: iconst_0
+     432: anewarray     #959                // class java/nio/file/LinkOption
+     435: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+     438: ifne          464
+     441: aload_1
+     442: iconst_1
+     443: anewarray     #138                // class java/lang/String
+     446: dup
+     447: iconst_0
+     448: aload         13
+     450: aastore
+     451: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     454: iconst_0
+     455: anewarray     #959                // class java/nio/file/LinkOption
+     458: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+     461: ifeq          468
+     464: iconst_1
+     465: goto          469
+     468: iconst_0
+     469: istore        12
+     471: goto          523
+     474: aload         6
+     476: aload         11
+     478: invokeinterface #1022,  2         // InterfaceMethod java/nio/file/Path.resolve:(Ljava/lang/String;)Ljava/nio/file/Path;
+     483: iconst_0
+     484: anewarray     #959                // class java/nio/file/LinkOption
+     487: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+     490: ifne          516
+     493: aload_1
+     494: iconst_1
+     495: anewarray     #138                // class java/lang/String
+     498: dup
+     499: iconst_0
+     500: aload         11
+     502: aastore
+     503: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     506: iconst_0
+     507: anewarray     #959                // class java/nio/file/LinkOption
+     510: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+     513: ifeq          520
+     516: iconst_1
+     517: goto          521
+     520: iconst_0
+     521: istore        12
+     523: iload         12
+     525: ifne          548
+     528: aload         9
+     530: ldc_w         #1026               // String   - Missing:
+     533: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     536: aload         10
+     538: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     541: ldc_w         #459                // String \n
+     544: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     547: pop
+     548: goto          269
+     551: aload         9
+     553: invokevirtual #795                // Method java/lang/StringBuilder.length:()I
+     556: ifle          586
+     559: new           #780                // class java/lang/Exception
+     562: dup
+     563: aload_2
+     564: invokeinterface #1028,  1         // InterfaceMethod java/nio/file/Path.getFileName:()Ljava/nio/file/Path;
+     569: invokestatic  #920                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     572: aload         9
+     574: invokestatic  #920                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     577: invokedynamic #1031,  0           // InvokeDynamic #48:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     582: invokespecial #988                // Method java/lang/Exception."<init>":(Ljava/lang/String;)V
+     585: athrow
+     586: aload_0
+     587: ldc_w         #1032               // String ? All asset references resolved.
+     590: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     593: goto          603
+     596: aload_0
+     597: ldc_w         #1034               // String ? Server-side rendered Node.js project (EJS/Pug/HBS) ù no static index.html required.
+     600: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     603: aload_1
+     604: iconst_1
+     605: anewarray     #138                // class java/lang/String
+     608: dup
+     609: iconst_0
+     610: ldc_w         #1036               // String package.json
+     613: aastore
+     614: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     617: astore        4
+     619: aload         4
+     621: iconst_0
+     622: anewarray     #959                // class java/nio/file/LinkOption
+     625: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+     628: ifeq          736
+     631: aload_0
+     632: ldc_w         #1038               // String ? Node.js project detected. Running npm install...
+     635: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     638: ldc_w         #1040               // String os.name
+     641: invokestatic  #1042               // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     644: invokevirtual #322                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     647: ldc_w         #1044               // String win
+     650: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     653: istore        5
+     655: iload         5
+     657: ifeq          697
+     660: aload_0
+     661: aload_1
+     662: iconst_4
+     663: anewarray     #138                // class java/lang/String
+     666: dup
+     667: iconst_0
+     668: ldc_w         #1046               // String cmd
+     671: aastore
+     672: dup
+     673: iconst_1
+     674: ldc_w         #1048               // String /c
+     677: aastore
+     678: dup
+     679: iconst_2
+     680: ldc_w         #1050               // String npm
+     683: aastore
+     684: dup
+     685: iconst_3
+     686: ldc_w         #1052               // String install
+     689: aastore
+     690: invokevirtual #1054               // Method runCmd:(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     693: pop
+     694: goto          719
+     697: aload_0
+     698: aload_1
+     699: iconst_2
+     700: anewarray     #138                // class java/lang/String
+     703: dup
+     704: iconst_0
+     705: ldc_w         #1050               // String npm
+     708: aastore
+     709: dup
+     710: iconst_1
+     711: ldc_w         #1052               // String install
+     714: aastore
+     715: invokevirtual #1054               // Method runCmd:(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     718: pop
+     719: aload_0
+     720: ldc_w         #1058               // String ? npm install complete.
+     723: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     726: aload_0
+     727: aload_1
+     728: invokedynamic #1060,  0           // InvokeDynamic #49:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     733: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     736: return
+
+  private void autoStartWebServer(java.lang.String, java.lang.String);
+    Code:
+       0: ldc_w         #1040               // String os.name
+       3: invokestatic  #1042               // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       6: invokevirtual #322                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+       9: ldc_w         #1044               // String win
+      12: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      15: istore_3
+      16: aload_1
+      17: iconst_1
+      18: anewarray     #138                // class java/lang/String
+      21: dup
+      22: iconst_0
+      23: ldc_w         #1036               // String package.json
+      26: aastore
+      27: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      30: astore        4
+      32: aload         4
+      34: iconst_0
+      35: anewarray     #959                // class java/nio/file/LinkOption
+      38: invokestatic  #961                // Method java/nio/file/Files.exists:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+      41: ifeq          200
+      44: aload_0
+      45: ldc_w         #1061               // String ? Auto-starting Node/React server...
+      48: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      51: aload         4
+      53: invokestatic  #990                // Method java/nio/file/Files.readString:(Ljava/nio/file/Path;)Ljava/lang/String;
+      56: astore        5
+      58: aload         5
+      60: ldc_w         #1063               // String \"dev\":
+      63: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      66: ifeq          75
+      69: ldc_w         #1065               // String npm run dev
+      72: goto          78
+      75: ldc_w         #1067               // String npm start
+      78: astore        6
+      80: iload_3
+      81: ifeq          149
+      84: new           #1069               // class java/lang/ProcessBuilder
+      87: dup
+      88: bipush        6
+      90: anewarray     #138                // class java/lang/String
+      93: dup
+      94: iconst_0
+      95: ldc_w         #1046               // String cmd
+      98: aastore
+      99: dup
+     100: iconst_1
+     101: ldc_w         #1048               // String /c
+     104: aastore
+     105: dup
+     106: iconst_2
+     107: ldc_w         #1071               // String start
+     110: aastore
+     111: dup
+     112: iconst_3
+     113: ldc_w         #1046               // String cmd
+     116: aastore
+     117: dup
+     118: iconst_4
+     119: ldc_w         #1072               // String /k
+     122: aastore
+     123: dup
+     124: iconst_5
+     125: aload         6
+     127: aastore
+     128: invokespecial #1074               // Method java/lang/ProcessBuilder."<init>":([Ljava/lang/String;)V
+     131: new           #524                // class java/io/File
+     134: dup
+     135: aload_1
+     136: invokespecial #529                // Method java/io/File."<init>":(Ljava/lang/String;)V
+     139: invokevirtual #1077               // Method java/lang/ProcessBuilder.directory:(Ljava/io/File;)Ljava/lang/ProcessBuilder;
+     142: invokevirtual #1081               // Method java/lang/ProcessBuilder.start:()Ljava/lang/Process;
+     145: pop
+     146: goto          197
+     149: new           #1069               // class java/lang/ProcessBuilder
+     152: dup
+     153: iconst_3
+     154: anewarray     #138                // class java/lang/String
+     157: dup
+     158: iconst_0
+     159: ldc_w         #1084               // String sh
+     162: aastore
+     163: dup
+     164: iconst_1
+     165: ldc_w         #1086               // String -c
+     168: aastore
+     169: dup
+     170: iconst_2
+     171: aload         6
+     173: invokedynamic #1088,  0           // InvokeDynamic #50:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     178: aastore
+     179: invokespecial #1074               // Method java/lang/ProcessBuilder."<init>":([Ljava/lang/String;)V
+     182: new           #524                // class java/io/File
+     185: dup
+     186: aload_1
+     187: invokespecial #529                // Method java/io/File."<init>":(Ljava/lang/String;)V
+     190: invokevirtual #1077               // Method java/lang/ProcessBuilder.directory:(Ljava/io/File;)Ljava/lang/ProcessBuilder;
+     193: invokevirtual #1081               // Method java/lang/ProcessBuilder.start:()Ljava/lang/Process;
+     196: pop
+     197: goto          249
+     200: aload_2
+     201: ldc_w         #479                // String WEB
+     204: invokevirtual #481                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     207: ifeq          249
+     210: new           #524                // class java/io/File
+     213: dup
+     214: aload_1
+     215: ldc_w         #759                // String index.html
+     218: invokespecial #761                // Method java/io/File."<init>":(Ljava/lang/String;Ljava/lang/String;)V
+     221: astore        5
+     223: aload         5
+     225: invokevirtual #530                // Method java/io/File.exists:()Z
+     228: ifeq          249
+     231: aload_0
+     232: ldc_w         #1089               // String ? Opening static index.html in browser...
+     235: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     238: invokestatic  #765                // Method java/awt/Desktop.getDesktop:()Ljava/awt/Desktop;
+     241: aload         5
+     243: invokevirtual #771                // Method java/io/File.toURI:()Ljava/net/URI;
+     246: invokevirtual #775                // Method java/awt/Desktop.browse:(Ljava/net/URI;)V
+     249: goto          266
+     252: astore_3
+     253: aload_0
+     254: aload_3
+     255: invokevirtual #782                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     258: invokedynamic #1091,  0           // InvokeDynamic #51:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     263: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     266: return
+    Exception table:
+       from    to  target type
+           0   249   252   Class java/lang/Exception
+
+  private void runJavaPipeline(java.lang.String, java.lang.String, java.lang.String, com.forge.aiteam.DatabaseConnection, com.forge.aiteam.GeminiService, int) throws java.lang.Exception;
+    Code:
+       0: aload_3
+       1: ifnull        11
+       4: aload_3
+       5: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+       8: ifeq          19
+      11: aload_0
+      12: ldc_w         #1092               // String \n?? No code to build.
+      15: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      18: return
+      19: aload_3
+      20: astore        7
+      22: aload_0
+      23: aload         7
+      25: invokevirtual #1094               // Method findMainClass:(Ljava/lang/String;)Ljava/lang/String;
+      28: astore        8
+      30: bipush        10
+      32: istore        9
+      34: iconst_0
+      35: istore        10
+      37: iconst_0
+      38: istore        11
+      40: iload         10
+      42: iload         9
+      44: if_icmpge     410
+      47: iload         11
+      49: ifne          410
+      52: iinc          10, 1
+      55: iload         10
+      57: istore        12
+      59: aload         8
+      61: ifnonnull     136
+      64: aload_0
+      65: ldc_w         #1097               // String \n? [Repair] No main class. Asking AI...
+      68: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      71: aload_0
+      72: aload         5
+      74: ldc_w         #1099               // String CODER
+      77: ldc_w         #1101               // String No \'public static void main\' found. Add an entry point and return COMPLETE [FILE: Name.java]...[ENDFILE] blocks.
+      80: aload         7
+      82: invokevirtual #385                // Method askAgentResilient:(Lcom/forge/aiteam/GeminiService;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      85: astore        13
+      87: aload         13
+      89: ldc_w         #944                // String [FILE:
+      92: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      95: ifeq          121
+      98: aload_0
+      99: aload         13
+     101: aload_2
+     102: ldc_w         #486                // String JAVA
+     105: invokevirtual #949                // Method extractAndCreateFiles:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z
+     108: pop
+     109: aload_0
+     110: aload         13
+     112: invokevirtual #1094               // Method findMainClass:(Ljava/lang/String;)Ljava/lang/String;
+     115: astore        8
+     117: aload         13
+     119: astore        7
+     121: aload         8
+     123: ifnonnull     136
+     126: aload_0
+     127: ldc_w         #1103               // String ?? Still no main class. Aborting.
+     130: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     133: goto          410
+     136: aload_0
+     137: iload         12
+     139: invokedynamic #1105,  0           // InvokeDynamic #52:makeConcatWithConstants:(I)Ljava/lang/String;
+     144: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     147: aload_0
+     148: aload_2
+     149: aload         8
+     151: invokevirtual #1106               // Method runDevOpsPipeline:(Ljava/lang/String;Ljava/lang/String;)V
+     154: iconst_1
+     155: istore        11
+     157: aload_0
+     158: iload         10
+     160: invokedynamic #1109,  0           // InvokeDynamic #53:makeConcatWithConstants:(I)Ljava/lang/String;
+     165: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     168: goto          407
+     171: astore        13
+     173: iload         10
+     175: iload         9
+     177: if_icmplt     190
+     180: aload_0
+     181: ldc_w         #1110               // String \n? Max repair attempts reached. Build failed.
+     184: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     187: aload         13
+     189: athrow
+     190: aload_0
+     191: ldc_w         #1112               // String \n? [Repair] Build failed. Analyzing error...
+     194: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     197: aload_0
+     198: aload_2
+     199: invokevirtual #938                // Method getProjectFilesContext:(Ljava/lang/String;)Ljava/lang/String;
+     202: astore        14
+     204: aload         13
+     206: invokevirtual #782                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     209: aload         14
+     211: invokedynamic #1114,  0           // InvokeDynamic #54:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     216: astore        15
+     218: aload_0
+     219: ldc_w         #1115               // String REPAIR
+     222: aload         13
+     224: invokevirtual #782                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     227: invokevirtual #312                // Method checkLoop:(Ljava/lang/String;Ljava/lang/String;)Z
+     230: ifeq          267
+     233: aload_0
+     234: ldc_w         #1115               // String REPAIR
+     237: aload         13
+     239: invokevirtual #782                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     242: invokevirtual #316                // Method enterConsultMode:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     245: astore        16
+     247: aload         15
+     249: aload         16
+     251: invokedynamic #319,  0            // InvokeDynamic #18:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     256: astore        15
+     258: aload_0
+     259: getfield      #16                 // Field loopCounter:Ljava/util/Map;
+     262: invokeinterface #192,  1          // InterfaceMethod java/util/Map.clear:()V
+     267: aload_0
+     268: aload         5
+     270: ldc_w         #942                // String TESTER
+     273: ldc_w         #942                // String TESTER
+     276: invokestatic  #888                // Method com/forge/aiteam/DatabaseConnection.getPromptByRole:(Ljava/lang/String;)Ljava/lang/String;
+     279: aload         15
+     281: invokevirtual #385                // Method askAgentResilient:(Lcom/forge/aiteam/GeminiService;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     284: astore        16
+     286: aload         16
+     288: ldc_w         #306                // String AI communication failed
+     291: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     294: ifeq          329
+     297: aload         16
+     299: ldc_w         #320                // String 429
+     302: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     305: ifne          329
+     308: aload         16
+     310: ldc_w         #325                // String quota
+     313: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     316: ifne          329
+     319: aload_0
+     320: ldc_w         #1117               // String ?? Non-retryable AI error. Aborting.
+     323: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     326: goto          410
+     329: aload         16
+     331: ldc_w         #944                // String [FILE:
+     334: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     337: ifne          350
+     340: aload_0
+     341: ldc_w         #1119               // String ?? [Repair Guard]: No file blocks. Retrying with existing files...
+     344: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     347: goto          40
+     350: aload         4
+     352: iload         6
+     354: iload         10
+     356: invokedynamic #1121,  0           // InvokeDynamic #55:makeConcatWithConstants:(I)Ljava/lang/String;
+     361: aload         16
+     363: invokevirtual #916                // Method com/forge/aiteam/DatabaseConnection.saveMessage:(ILjava/lang/String;Ljava/lang/String;)V
+     366: aload_0
+     367: aload         16
+     369: aload_2
+     370: ldc_w         #486                // String JAVA
+     373: invokevirtual #949                // Method extractAndCreateFiles:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z
+     376: ifeq          407
+     379: aload_0
+     380: ldc_w         #1122               // String \n?? [Repair Applied]: Retrying build...
+     383: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     386: aload         16
+     388: astore        7
+     390: aload_0
+     391: aload         16
+     393: invokevirtual #1094               // Method findMainClass:(Ljava/lang/String;)Ljava/lang/String;
+     396: astore        17
+     398: aload         17
+     400: ifnull        407
+     403: aload         17
+     405: astore        8
+     407: goto          40
+     410: return
+    Exception table:
+       from    to  target type
+          59   133   171   Class java/lang/Exception
+         136   168   171   Class java/lang/Exception
+
+  private void runDevOpsPipeline(java.lang.String, java.lang.String) throws java.lang.Exception;
+    Code:
+       0: aload_1
+       1: astore_3
+       2: aload_0
+       3: ldc_w         #1124               // String \n?? [DevOps] Starting Java Build...
+       6: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+       9: aload_3
+      10: iconst_0
+      11: anewarray     #138                // class java/lang/String
+      14: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      17: astore        4
+      19: new           #435                // class java/lang/StringBuilder
+      22: dup
+      23: invokespecial #437                // Method java/lang/StringBuilder."<init>":()V
+      26: astore        5
+      28: aload         4
+      30: iconst_0
+      31: anewarray     #971                // class java/nio/file/FileVisitOption
+      34: invokestatic  #973                // Method java/nio/file/Files.walk:(Ljava/nio/file/Path;[Ljava/nio/file/FileVisitOption;)Ljava/util/stream/Stream;
+      37: invokedynamic #1126,  0           // InvokeDynamic #56:test:()Ljava/util/function/Predicate;
+      42: invokeinterface #1127,  2         // InterfaceMethod java/util/stream/Stream.filter:(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;
+      47: aload         5
+      49: invokedynamic #1131,  0           // InvokeDynamic #57:accept:(Ljava/lang/StringBuilder;)Ljava/util/function/Consumer;
+      54: invokeinterface #1134,  2         // InterfaceMethod java/util/stream/Stream.forEach:(Ljava/util/function/Consumer;)V
+      59: aload         4
+      61: ldc_w         #1137               // String sources.txt
+      64: invokeinterface #1022,  2         // InterfaceMethod java/nio/file/Path.resolve:(Ljava/lang/String;)Ljava/nio/file/Path;
+      69: aload         5
+      71: invokevirtual #471                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      74: iconst_0
+      75: anewarray     #908                // class java/nio/file/OpenOption
+      78: invokestatic  #910                // Method java/nio/file/Files.writeString:(Ljava/nio/file/Path;Ljava/lang/CharSequence;[Ljava/nio/file/OpenOption;)Ljava/nio/file/Path;
+      81: pop
+      82: aload_0
+      83: ldc_w         #1139               // String ? Step 1: Compiling...
+      86: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      89: ldc_w         #1141               // String com.forge.aiteam.MainApp
+      92: aload_2
+      93: invokevirtual #481                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      96: ifne          109
+      99: aload_1
+     100: ldc_w         #1143               // String Brain - Copy
+     103: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     106: ifeq          271
+     109: aload_0
+     110: ldc_w         #1145               // String ? [Self-Evolution] Brain AI detected! Running custom JavaFX build...
+     113: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     116: ldc_w         #1040               // String os.name
+     119: invokestatic  #1042               // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     122: invokevirtual #322                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     125: ldc_w         #1044               // String win
+     128: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     131: istore        6
+     133: iload         6
+     135: ifeq          271
+     138: aload_0
+     139: aload_3
+     140: bipush        12
+     142: anewarray     #138                // class java/lang/String
+     145: dup
+     146: iconst_0
+     147: ldc_w         #1046               // String cmd
+     150: aastore
+     151: dup
+     152: iconst_1
+     153: ldc_w         #1048               // String /c
+     156: aastore
+     157: dup
+     158: iconst_2
+     159: ldc_w         #1147               // String javac
+     162: aastore
+     163: dup
+     164: iconst_3
+     165: ldc_w         #1149               // String --module-path
+     168: aastore
+     169: dup
+     170: iconst_4
+     171: ldc_w         #1151               // String javafx-sdk\\lib
+     174: aastore
+     175: dup
+     176: iconst_5
+     177: ldc_w         #1153               // String --add-modules
+     180: aastore
+     181: dup
+     182: bipush        6
+     184: ldc_w         #1155               // String javafx.controls,javafx.fxml,javafx.graphics,javafx.base,javafx.swing
+     187: aastore
+     188: dup
+     189: bipush        7
+     191: ldc_w         #1157               // String -cp
+     194: aastore
+     195: dup
+     196: bipush        8
+     198: ldc_w         #1159               // String lib\\*;javafx-sdk\\lib\\*
+     201: aastore
+     202: dup
+     203: bipush        9
+     205: ldc_w         #1161               // String -d
+     208: aastore
+     209: dup
+     210: bipush        10
+     212: ldc_w         #1163               // String build\\classes
+     215: aastore
+     216: dup
+     217: bipush        11
+     219: ldc_w         #1165               // String src\\main\\java\\com\\forge\\aiteam\\*.java
+     222: aastore
+     223: invokevirtual #1054               // Method runCmd:(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     226: pop
+     227: aload_0
+     228: ldc_w         #1167               // String ? [Self-Evolution] Compilation successful.
+     231: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     234: ldc_w         #1169               // String @echo off\necho Starting Brain AI...\njava --module-path \"javafx-sdk\\lib\" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base,javafx.swing -cp \"build\\classes;lib\\*\" com.forge.aiteam.MainApp\npause
+     237: astore        7
+     239: aload_3
+     240: iconst_1
+     241: anewarray     #138                // class java/lang/String
+     244: dup
+     245: iconst_0
+     246: ldc_w         #1171               // String restart.bat
+     249: aastore
+     250: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     253: aload         7
+     255: iconst_0
+     256: anewarray     #908                // class java/nio/file/OpenOption
+     259: invokestatic  #910                // Method java/nio/file/Files.writeString:(Ljava/nio/file/Path;Ljava/lang/CharSequence;[Ljava/nio/file/OpenOption;)Ljava/nio/file/Path;
+     262: pop
+     263: aload_0
+     264: ldc_w         #1173               // String ? [Self-Evolution] Created restart.bat. Run this to launch the new version!
+     267: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     270: return
+     271: aload_0
+     272: aload_3
+     273: iconst_2
+     274: anewarray     #138                // class java/lang/String
+     277: dup
+     278: iconst_0
+     279: ldc_w         #1147               // String javac
+     282: aastore
+     283: dup
+     284: iconst_1
+     285: ldc_w         #1175               // String @sources.txt
+     288: aastore
+     289: invokevirtual #1054               // Method runCmd:(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     292: pop
+     293: aload_0
+     294: ldc_w         #1177               // String ? Compilation successful.
+     297: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     300: aload         4
+     302: ldc_w         #1179               // String libs
+     305: invokeinterface #1022,  2         // InterfaceMethod java/nio/file/Path.resolve:(Ljava/lang/String;)Ljava/nio/file/Path;
+     310: iconst_0
+     311: anewarray     #1181               // class java/nio/file/attribute/FileAttribute
+     314: invokestatic  #1183               // Method java/nio/file/Files.createDirectories:(Ljava/nio/file/Path;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;
+     317: pop
+     318: aload_0
+     319: ldc_w         #1187               // String ? Step 2: Creating JAR...
+     322: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     325: aload_0
+     326: aload_3
+     327: iconst_5
+     328: anewarray     #138                // class java/lang/String
+     331: dup
+     332: iconst_0
+     333: ldc_w         #1189               // String jar
+     336: aastore
+     337: dup
+     338: iconst_1
+     339: ldc_w         #1191               // String cfe
+     342: aastore
+     343: dup
+     344: iconst_2
+     345: ldc_w         #1193               // String libs/App.jar
+     348: aastore
+     349: dup
+     350: iconst_3
+     351: aload_2
+     352: aastore
+     353: dup
+     354: iconst_4
+     355: ldc_w         #1195               // String .
+     358: aastore
+     359: invokevirtual #1054               // Method runCmd:(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     362: pop
+     363: aload_0
+     364: ldc_w         #1197               // String ? JAR created: libs/App.jar
+     367: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     370: ldc_w         #1040               // String os.name
+     373: invokestatic  #1042               // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     376: invokevirtual #322                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+     379: ldc_w         #1044               // String win
+     382: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+     385: istore        6
+     387: aload_0
+     388: ldc_w         #1199               // String ? Step 3: Generating native app...
+     391: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     394: new           #216                // class java/util/ArrayList
+     397: dup
+     398: bipush        13
+     400: anewarray     #138                // class java/lang/String
+     403: dup
+     404: iconst_0
+     405: ldc_w         #1201               // String jpackage
+     408: aastore
+     409: dup
+     410: iconst_1
+     411: ldc_w         #1203               // String --type
+     414: aastore
+     415: dup
+     416: iconst_2
+     417: ldc_w         #1205               // String app-image
+     420: aastore
+     421: dup
+     422: iconst_3
+     423: ldc_w         #1207               // String --name
+     426: aastore
+     427: dup
+     428: iconst_4
+     429: ldc_w         #1209               // String AI_App
+     432: aastore
+     433: dup
+     434: iconst_5
+     435: ldc_w         #1211               // String --input
+     438: aastore
+     439: dup
+     440: bipush        6
+     442: ldc_w         #1179               // String libs
+     445: aastore
+     446: dup
+     447: bipush        7
+     449: ldc_w         #1213               // String --main-jar
+     452: aastore
+     453: dup
+     454: bipush        8
+     456: ldc_w         #1215               // String App.jar
+     459: aastore
+     460: dup
+     461: bipush        9
+     463: ldc_w         #1217               // String --main-class
+     466: aastore
+     467: dup
+     468: bipush        10
+     470: aload_2
+     471: aastore
+     472: dup
+     473: bipush        11
+     475: ldc_w         #1153               // String --add-modules
+     478: aastore
+     479: dup
+     480: bipush        12
+     482: ldc_w         #1219               // String java.desktop,java.base,java.logging
+     485: aastore
+     486: invokestatic  #1221               // Method java/util/Arrays.asList:([Ljava/lang/Object;)Ljava/util/List;
+     489: invokespecial #1227               // Method java/util/ArrayList."<init>":(Ljava/util/Collection;)V
+     492: astore        7
+     494: iload         6
+     496: ifeq          510
+     499: aload         7
+     501: ldc_w         #1230               // String --win-console
+     504: invokeinterface #244,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     509: pop
+     510: aload_0
+     511: aload_3
+     512: aload         7
+     514: iconst_0
+     515: anewarray     #138                // class java/lang/String
+     518: invokeinterface #1232,  2         // InterfaceMethod java/util/List.toArray:([Ljava/lang/Object;)[Ljava/lang/Object;
+     523: checkcast     #1236               // class "[Ljava/lang/String;"
+     526: invokevirtual #1054               // Method runCmd:(Ljava/lang/String;[Ljava/lang/String;)Ljava/lang/String;
+     529: pop
+     530: aload_0
+     531: ldc_w         #1238               // String ? Native .exe application generated inside AI_App folder.
+     534: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     537: return
+
+  private boolean extractAndCreateFiles(java.lang.String, java.lang.String, java.lang.String) throws java.lang.Exception;
+    Code:
+       0: aload_2
+       1: iconst_0
+       2: anewarray     #138                // class java/lang/String
+       5: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+       8: invokeinterface #1240,  1         // InterfaceMethod java/nio/file/Path.toAbsolutePath:()Ljava/nio/file/Path;
+      13: invokeinterface #1243,  1         // InterfaceMethod java/nio/file/Path.normalize:()Ljava/nio/file/Path;
+      18: astore        4
+      20: ldc_w         #1246               // String \\[FILE:\\s*(.*?)\\](.*?)\\[ENDFILE\\]
+      23: bipush        32
+      25: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+      28: astore        5
+      30: aload         5
+      32: aload_1
+      33: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+      36: astore        6
+      38: iconst_0
+      39: istore        7
+      41: aload         6
+      43: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+      46: ifeq          369
+      49: iconst_1
+      50: istore        7
+      52: aload         6
+      54: iconst_1
+      55: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+      58: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+      61: astore        8
+      63: aload         6
+      65: iconst_2
+      66: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+      69: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+      72: astore        9
+      74: aload         9
+      76: ldc_w         #1248               // String (?i)^```[a-z]*\\n
+      79: ldc_w         #651                // String
+      82: invokevirtual #862                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      85: ldc_w         #1250               // String (?i)^```[a-z]*
+      88: ldc_w         #651                // String
+      91: invokevirtual #862                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      94: ldc_w         #1252               // String (?i)\\n```$
+      97: ldc_w         #651                // String
+     100: invokevirtual #862                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     103: ldc_w         #1254               // String (?i)```$
+     106: ldc_w         #651                // String
+     109: invokevirtual #862                // Method java/lang/String.replaceAll:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     112: astore        9
+     114: aload         8
+     116: ldc_w         #1256               // String \\
+     119: ldc_w         #1018               // String /
+     122: invokevirtual #1258               // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+     125: astore        10
+     127: ldc_w         #486                // String JAVA
+     130: aload_3
+     131: invokevirtual #481                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     134: ifeq          159
+     137: aload         10
+     139: ldc_w         #1262               // String src/main/java/
+     142: ldc_w         #651                // String
+     145: invokevirtual #1258               // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+     148: ldc_w         #1264               // String src/
+     151: ldc_w         #651                // String
+     154: invokevirtual #1258               // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+     157: astore        10
+     159: aload         10
+     161: ldc_w         #1266               // String .java
+     164: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+     167: ifeq          278
+     170: ldc_w         #1271               // String ^package\\s+([\\w\\.]+);
+     173: bipush        8
+     175: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+     178: aload         9
+     180: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+     183: astore        11
+     185: aload         11
+     187: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+     190: ifeq          278
+     193: aload         11
+     195: iconst_1
+     196: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+     199: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     202: astore        12
+     204: aload         12
+     206: ldc_w         #1195               // String .
+     209: ldc_w         #1018               // String /
+     212: invokevirtual #1258               // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+     215: astore        13
+     217: aload         10
+     219: iconst_0
+     220: anewarray     #138                // class java/lang/String
+     223: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+     226: invokeinterface #1028,  1         // InterfaceMethod java/nio/file/Path.getFileName:()Ljava/nio/file/Path;
+     231: invokeinterface #1273,  1         // InterfaceMethod java/nio/file/Path.toString:()Ljava/lang/String;
+     236: astore        14
+     238: aload         10
+     240: aload         13
+     242: invokevirtual #308                // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+     245: ifne          278
+     248: aload         10
+     250: astore        15
+     252: aload         13
+     254: aload         14
+     256: invokedynamic #1274,  0           // InvokeDynamic #58:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     261: astore        10
+     263: aload_0
+     264: aload         14
+     266: aload         12
+     268: aload         13
+     270: invokedynamic #1275,  0           // InvokeDynamic #59:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     275: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     278: aload         4
+     280: aload         10
+     282: invokeinterface #1022,  2         // InterfaceMethod java/nio/file/Path.resolve:(Ljava/lang/String;)Ljava/nio/file/Path;
+     287: invokeinterface #1240,  1         // InterfaceMethod java/nio/file/Path.toAbsolutePath:()Ljava/nio/file/Path;
+     292: invokeinterface #1243,  1         // InterfaceMethod java/nio/file/Path.normalize:()Ljava/nio/file/Path;
+     297: astore        11
+     299: aload         11
+     301: aload         4
+     303: invokeinterface #1278,  2         // InterfaceMethod java/nio/file/Path.startsWith:(Ljava/nio/file/Path;)Z
+     308: ifne          325
+     311: aload_0
+     312: aload         8
+     314: invokedynamic #1281,  0           // InvokeDynamic #60:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     319: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     322: goto          41
+     325: aload         11
+     327: invokeinterface #996,  1          // InterfaceMethod java/nio/file/Path.getParent:()Ljava/nio/file/Path;
+     332: iconst_0
+     333: anewarray     #1181               // class java/nio/file/attribute/FileAttribute
+     336: invokestatic  #1183               // Method java/nio/file/Files.createDirectories:(Ljava/nio/file/Path;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;
+     339: pop
+     340: aload         11
+     342: aload         9
+     344: iconst_0
+     345: anewarray     #908                // class java/nio/file/OpenOption
+     348: invokestatic  #910                // Method java/nio/file/Files.writeString:(Ljava/nio/file/Path;Ljava/lang/CharSequence;[Ljava/nio/file/OpenOption;)Ljava/nio/file/Path;
+     351: pop
+     352: aload_0
+     353: aload         11
+     355: invokestatic  #920                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     358: invokedynamic #1282,  0           // InvokeDynamic #61:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     363: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     366: goto          41
+     369: iload         7
+     371: ifne          381
+     374: aload_0
+     375: ldc_w         #1283               // String ?? No [FILE] tags detected in the AI output.
+     378: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     381: iload         7
+     383: ireturn
+
+  private java.lang.String findMainClass(java.lang.String);
+    Code:
+       0: aload_1
+       1: ifnonnull     6
+       4: aconst_null
+       5: areturn
+       6: ldc_w         #1246               // String \\[FILE:\\s*(.*?)\\](.*?)\\[ENDFILE\\]
+       9: bipush        32
+      11: invokestatic  #223                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;I)Ljava/util/regex/Pattern;
+      14: astore_2
+      15: aload_2
+      16: aload_1
+      17: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+      20: astore_3
+      21: aload_3
+      22: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+      25: ifeq          176
+      28: aload_3
+      29: iconst_1
+      30: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+      33: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+      36: astore        4
+      38: aload_3
+      39: iconst_2
+      40: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+      43: astore        5
+      45: aload         5
+      47: ldc_w         #1285               // String public static void main
+      50: invokevirtual #205                // Method java/lang/String.contains:(Ljava/lang/CharSequence;)Z
+      53: ifne          59
+      56: goto          21
+      59: ldc_w         #1287               // String package\\s+([\\w\\.]+);
+      62: invokestatic  #351                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;)Ljava/util/regex/Pattern;
+      65: aload         5
+      67: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+      70: astore        6
+      72: aload         6
+      74: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+      77: ifeq          97
+      80: aload         6
+      82: iconst_1
+      83: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+      86: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+      89: invokedynamic #1289,  0           // InvokeDynamic #62:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      94: goto          100
+      97: ldc_w         #651                // String
+     100: astore        7
+     102: ldc_w         #1290               // String public\\s+class\\s+([\\w\\d_]+)
+     105: invokestatic  #351                // Method java/util/regex/Pattern.compile:(Ljava/lang/String;)Ljava/util/regex/Pattern;
+     108: aload         5
+     110: invokevirtual #227                // Method java/util/regex/Pattern.matcher:(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;
+     113: astore        8
+     115: aload         8
+     117: invokevirtual #231                // Method java/util/regex/Matcher.find:()Z
+     120: ifeq          142
+     123: aload         7
+     125: aload         8
+     127: iconst_1
+     128: invokevirtual #237                // Method java/util/regex/Matcher.group:(I)Ljava/lang/String;
+     131: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+     134: invokedynamic #1292,  0           // InvokeDynamic #63:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     139: goto          160
+     142: aload         7
+     144: aload         4
+     146: ldc_w         #1266               // String .java
+     149: ldc_w         #651                // String
+     152: invokevirtual #1258               // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+     155: invokedynamic #1292,  0           // InvokeDynamic #63:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     160: astore        9
+     162: aload_0
+     163: aload         9
+     165: invokedynamic #1293,  0           // InvokeDynamic #64:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     170: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     173: aload         9
+     175: areturn
+     176: aconst_null
+     177: areturn
+
+  private java.lang.String listProjectFiles(java.lang.String);
+    Code:
+       0: new           #435                // class java/lang/StringBuilder
+       3: dup
+       4: invokespecial #437                // Method java/lang/StringBuilder."<init>":()V
+       7: astore_2
+       8: aload_1
+       9: iconst_0
+      10: anewarray     #138                // class java/lang/String
+      13: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      16: iconst_0
+      17: anewarray     #971                // class java/nio/file/FileVisitOption
+      20: invokestatic  #973                // Method java/nio/file/Files.walk:(Ljava/nio/file/Path;[Ljava/nio/file/FileVisitOption;)Ljava/util/stream/Stream;
+      23: invokedynamic #1294,  0           // InvokeDynamic #65:test:()Ljava/util/function/Predicate;
+      28: invokeinterface #1127,  2         // InterfaceMethod java/util/stream/Stream.filter:(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;
+      33: aload_2
+      34: aload_1
+      35: invokedynamic #1295,  0           // InvokeDynamic #66:accept:(Ljava/lang/StringBuilder;Ljava/lang/String;)Ljava/util/function/Consumer;
+      40: invokeinterface #1134,  2         // InterfaceMethod java/util/stream/Stream.forEach:(Ljava/util/function/Consumer;)V
+      45: goto          49
+      48: astore_3
+      49: aload_2
+      50: invokevirtual #471                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      53: areturn
+    Exception table:
+       from    to  target type
+           8    45    48   Class java/io/IOException
+
+  private java.lang.String getProjectFilesContext(java.lang.String);
+    Code:
+       0: new           #435                // class java/lang/StringBuilder
+       3: dup
+       4: invokespecial #437                // Method java/lang/StringBuilder."<init>":()V
+       7: astore_2
+       8: aload_1
+       9: iconst_0
+      10: anewarray     #138                // class java/lang/String
+      13: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      16: iconst_0
+      17: anewarray     #971                // class java/nio/file/FileVisitOption
+      20: invokestatic  #973                // Method java/nio/file/Files.walk:(Ljava/nio/file/Path;[Ljava/nio/file/FileVisitOption;)Ljava/util/stream/Stream;
+      23: invokedynamic #1300,  0           // InvokeDynamic #67:test:()Ljava/util/function/Predicate;
+      28: invokeinterface #1127,  2         // InterfaceMethod java/util/stream/Stream.filter:(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;
+      33: invokedynamic #1301,  0           // InvokeDynamic #68:test:()Ljava/util/function/Predicate;
+      38: invokeinterface #1127,  2         // InterfaceMethod java/util/stream/Stream.filter:(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;
+      43: aload_1
+      44: aload_2
+      45: invokedynamic #1302,  0           // InvokeDynamic #69:accept:(Ljava/lang/String;Ljava/lang/StringBuilder;)Ljava/util/function/Consumer;
+      50: invokeinterface #1134,  2         // InterfaceMethod java/util/stream/Stream.forEach:(Ljava/util/function/Consumer;)V
+      55: goto          59
+      58: astore_3
+      59: aload_2
+      60: invokevirtual #471                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      63: areturn
+    Exception table:
+       from    to  target type
+           8    55    58   Class java/io/IOException
+
+  private java.lang.String runCmd(java.lang.String, java.lang.String...) throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: ldc_w         #1305               // String
+       4: aload_2
+       5: invokestatic  #1307               // Method java/lang/String.join:(Ljava/lang/CharSequence;[Ljava/lang/CharSequence;)Ljava/lang/String;
+       8: invokedynamic #1311,  0           // InvokeDynamic #70:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      13: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+      16: new           #1069               // class java/lang/ProcessBuilder
+      19: dup
+      20: aload_2
+      21: invokespecial #1074               // Method java/lang/ProcessBuilder."<init>":([Ljava/lang/String;)V
+      24: astore_3
+      25: aload_3
+      26: new           #524                // class java/io/File
+      29: dup
+      30: aload_1
+      31: invokespecial #529                // Method java/io/File."<init>":(Ljava/lang/String;)V
+      34: invokevirtual #1077               // Method java/lang/ProcessBuilder.directory:(Ljava/io/File;)Ljava/lang/ProcessBuilder;
+      37: pop
+      38: aload_3
+      39: iconst_1
+      40: invokevirtual #1312               // Method java/lang/ProcessBuilder.redirectErrorStream:(Z)Ljava/lang/ProcessBuilder;
+      43: pop
+      44: aload_3
+      45: invokevirtual #1081               // Method java/lang/ProcessBuilder.start:()Ljava/lang/Process;
+      48: astore        4
+      50: new           #435                // class java/lang/StringBuilder
+      53: dup
+      54: invokespecial #437                // Method java/lang/StringBuilder."<init>":()V
+      57: astore        5
+      59: new           #1316               // class java/io/BufferedReader
+      62: dup
+      63: new           #1318               // class java/io/InputStreamReader
+      66: dup
+      67: aload         4
+      69: invokevirtual #1320               // Method java/lang/Process.getInputStream:()Ljava/io/InputStream;
+      72: invokespecial #1326               // Method java/io/InputStreamReader."<init>":(Ljava/io/InputStream;)V
+      75: invokespecial #1329               // Method java/io/BufferedReader."<init>":(Ljava/io/Reader;)V
+      78: astore        6
+      80: aload         6
+      82: invokevirtual #1332               // Method java/io/BufferedReader.readLine:()Ljava/lang/String;
+      85: dup
+      86: astore        7
+      88: ifnull        123
+      91: aload         5
+      93: aload         7
+      95: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      98: ldc_w         #459                // String \n
+     101: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     104: pop
+     105: aload         7
+     107: astore        8
+     109: aload_0
+     110: aload         8
+     112: invokedynamic #1335,  0           // InvokeDynamic #71:run:(Lcom/forge/aiteam/MainController;Ljava/lang/String;)Ljava/lang/Runnable;
+     117: invokestatic  #108                // Method javafx/application/Platform.runLater:(Ljava/lang/Runnable;)V
+     120: goto          80
+     123: aload         6
+     125: invokevirtual #1336               // Method java/io/BufferedReader.close:()V
+     128: goto          153
+     131: astore        7
+     133: aload         6
+     135: invokevirtual #1336               // Method java/io/BufferedReader.close:()V
+     138: goto          150
+     141: astore        8
+     143: aload         7
+     145: aload         8
+     147: invokevirtual #1339               // Method java/lang/Throwable.addSuppressed:(Ljava/lang/Throwable;)V
+     150: aload         7
+     152: athrow
+     153: aload         4
+     155: invokevirtual #1343               // Method java/lang/Process.waitFor:()I
+     158: istore        6
+     160: iload         6
+     162: ifeq          185
+     165: new           #780                // class java/lang/Exception
+     168: dup
+     169: iload         6
+     171: aload         5
+     173: invokestatic  #920                // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+     176: invokedynamic #1346,  0           // InvokeDynamic #72:makeConcatWithConstants:(ILjava/lang/String;)Ljava/lang/String;
+     181: invokespecial #988                // Method java/lang/Exception."<init>":(Ljava/lang/String;)V
+     184: athrow
+     185: aload         5
+     187: invokevirtual #471                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     190: areturn
+    Exception table:
+       from    to  target type
+          80   123   131   Class java/lang/Throwable
+         133   138   141   Class java/lang/Throwable
+
+  private void lambda$runCmd$21(java.lang.String);
+    Code:
+       0: aload_0
+       1: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+       4: aload_1
+       5: invokedynamic #1349,  0           // InvokeDynamic #73:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      10: invokevirtual #1350               // Method javafx/scene/control/TextArea.appendText:(Ljava/lang/String;)V
+      13: return
+
+  private static void lambda$getProjectFilesContext$20(java.lang.String, java.lang.StringBuilder, java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: iconst_0
+       2: anewarray     #138                // class java/lang/String
+       5: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+       8: aload_2
+       9: invokeinterface #1353,  2         // InterfaceMethod java/nio/file/Path.relativize:(Ljava/nio/file/Path;)Ljava/nio/file/Path;
+      14: invokeinterface #1273,  1         // InterfaceMethod java/nio/file/Path.toString:()Ljava/lang/String;
+      19: ldc_w         #1256               // String \\
+      22: ldc_w         #1018               // String /
+      25: invokevirtual #1258               // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+      28: astore_3
+      29: aload_1
+      30: ldc_w         #1357               // String [FILE:
+      33: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      36: aload_3
+      37: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      40: ldc_w         #1359               // String ]\n
+      43: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      46: aload_2
+      47: invokestatic  #990                // Method java/nio/file/Files.readString:(Ljava/nio/file/Path;)Ljava/lang/String;
+      50: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      53: ldc_w         #1361               // String \n[ENDFILE]\n\n
+      56: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      59: pop
+      60: goto          64
+      63: astore_3
+      64: return
+    Exception table:
+       from    to  target type
+           0    60    63   Class java/io/IOException
+
+  private static boolean lambda$getProjectFilesContext$19(java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: invokeinterface #1273,  1         // InterfaceMethod java/nio/file/Path.toString:()Ljava/lang/String;
+       6: invokevirtual #322                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+       9: astore_1
+      10: aload_1
+      11: ldc_w         #1266               // String .java
+      14: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      17: ifne          140
+      20: aload_1
+      21: ldc_w         #1363               // String .html
+      24: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      27: ifne          140
+      30: aload_1
+      31: ldc_w         #1365               // String .css
+      34: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      37: ifne          140
+      40: aload_1
+      41: ldc_w         #1367               // String .js
+      44: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      47: ifne          140
+      50: aload_1
+      51: ldc_w         #1369               // String .json
+      54: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      57: ifne          140
+      60: aload_1
+      61: ldc_w         #1371               // String .jsx
+      64: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      67: ifne          140
+      70: aload_1
+      71: ldc_w         #1373               // String .xml
+      74: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      77: ifne          140
+      80: aload_1
+      81: ldc_w         #1375               // String .fxml
+      84: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      87: ifne          140
+      90: aload_1
+      91: ldc_w         #1377               // String .bat
+      94: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      97: ifne          140
+     100: aload_1
+     101: ldc_w         #1379               // String .md
+     104: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+     107: ifne          140
+     110: aload_1
+     111: ldc_w         #1381               // String .properties
+     114: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+     117: ifne          140
+     120: aload_1
+     121: ldc_w         #1383               // String .sh
+     124: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+     127: ifne          140
+     130: aload_1
+     131: ldc_w         #1385               // String .txt
+     134: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+     137: ifeq          144
+     140: iconst_1
+     141: goto          145
+     144: iconst_0
+     145: ireturn
+
+  private static boolean lambda$getProjectFilesContext$18(java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: iconst_0
+       2: anewarray     #959                // class java/nio/file/LinkOption
+       5: invokestatic  #1387               // Method java/nio/file/Files.isRegularFile:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+       8: ireturn
+
+  private static void lambda$listProjectFiles$17(java.lang.StringBuilder, java.lang.String, java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: ldc_w         #1390               // String   -
+       4: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+       7: aload_1
+       8: iconst_0
+       9: anewarray     #138                // class java/lang/String
+      12: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      15: aload_2
+      16: invokeinterface #1353,  2         // InterfaceMethod java/nio/file/Path.relativize:(Ljava/nio/file/Path;)Ljava/nio/file/Path;
+      21: invokevirtual #1392               // Method java/lang/StringBuilder.append:(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+      24: ldc_w         #459                // String \n
+      27: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      30: pop
+      31: return
+
+  private static boolean lambda$listProjectFiles$16(java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: iconst_0
+       2: anewarray     #959                // class java/nio/file/LinkOption
+       5: invokestatic  #1387               // Method java/nio/file/Files.isRegularFile:(Ljava/nio/file/Path;[Ljava/nio/file/LinkOption;)Z
+       8: ireturn
+
+  private static void lambda$runDevOpsPipeline$15(java.lang.StringBuilder, java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: ldc_w         #1395               // String \"
+       4: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+       7: aload_1
+       8: invokeinterface #1240,  1         // InterfaceMethod java/nio/file/Path.toAbsolutePath:()Ljava/nio/file/Path;
+      13: invokeinterface #1273,  1         // InterfaceMethod java/nio/file/Path.toString:()Ljava/lang/String;
+      18: ldc_w         #1256               // String \\
+      21: ldc_w         #1018               // String /
+      24: invokevirtual #1258               // Method java/lang/String.replace:(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+      27: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      30: ldc_w         #1397               // String \"\n
+      33: invokevirtual #455                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      36: pop
+      37: return
+
+  private static boolean lambda$runDevOpsPipeline$14(java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: invokeinterface #1273,  1         // InterfaceMethod java/nio/file/Path.toString:()Ljava/lang/String;
+       6: ldc_w         #1266               // String .java
+       9: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      12: ireturn
+
+  private static boolean lambda$runWebValidation$13(java.nio.file.Path);
+    Code:
+       0: aload_0
+       1: invokeinterface #1273,  1         // InterfaceMethod java/nio/file/Path.toString:()Ljava/lang/String;
+       6: invokevirtual #322                // Method java/lang/String.toLowerCase:()Ljava/lang/String;
+       9: astore_1
+      10: aload_1
+      11: ldc_w         #1399               // String .ejs
+      14: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      17: ifne          50
+      20: aload_1
+      21: ldc_w         #1401               // String .pug
+      24: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      27: ifne          50
+      30: aload_1
+      31: ldc_w         #1403               // String .hbs
+      34: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      37: ifne          50
+      40: aload_1
+      41: ldc_w         #1363               // String .html
+      44: invokevirtual #1268               // Method java/lang/String.endsWith:(Ljava/lang/String;)Z
+      47: ifeq          54
+      50: iconst_1
+      51: goto          55
+      54: iconst_0
+      55: ireturn
+
+  private void lambda$onHelloButtonClick$12();
+    Code:
+       0: aload_0
+       1: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+       4: ifnull        15
+       7: aload_0
+       8: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+      11: iconst_0
+      12: invokevirtual #46                 // Method javafx/scene/control/Button.setDisable:(Z)V
+      15: return
+
+  private void lambda$onHelloButtonClick$11();
+    Code:
+       0: aload_0
+       1: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+       4: ifnull        15
+       7: aload_0
+       8: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+      11: iconst_1
+      12: invokevirtual #46                 // Method javafx/scene/control/Button.setDisable:(Z)V
+      15: return
+
+  private void lambda$onSettingsButtonClick$10(javafx.util.Pair);
+    Code:
+       0: aload_1
+       1: invokevirtual #1405               // Method javafx/util/Pair.getKey:()Ljava/lang/Object;
+       4: checkcast     #138                // class java/lang/String
+       7: astore_2
+       8: aload_1
+       9: invokevirtual #1410               // Method javafx/util/Pair.getValue:()Ljava/lang/Object;
+      12: checkcast     #138                // class java/lang/String
+      15: astore_3
+      16: invokestatic  #389                // Method com/forge/aiteam/APIKeyManager.getInstance:()Lcom/forge/aiteam/APIKeyManager;
+      19: aload_2
+      20: invokevirtual #1413               // Method com/forge/aiteam/APIKeyManager.setKeys:(Ljava/lang/String;)V
+      23: aload_2
+      24: ldc_w         #1416               // String ,
+      27: invokevirtual #379                // Method java/lang/String.split:(Ljava/lang/String;)[Ljava/lang/String;
+      30: iconst_0
+      31: aaload
+      32: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+      35: astore        4
+      37: aload         4
+      39: invokevirtual #409                // Method java/lang/String.isEmpty:()Z
+      42: ifne          54
+      45: ldc_w         #649                // String BRAIN_API_KEY
+      48: aload         4
+      50: invokestatic  #1418               // Method java/lang/System.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      53: pop
+      54: ldc_w         #701                // String BRAIN_MODEL
+      57: aload_3
+      58: invokestatic  #1418               // Method java/lang/System.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      61: pop
+      62: ldc_w         #1421               // String user.home
+      65: invokestatic  #1042               // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      68: getstatic     #1423               // Field java/io/File.separator:Ljava/lang/String;
+      71: invokedynamic #1426,  0           // InvokeDynamic #74:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      76: astore        5
+      78: aload         5
+      80: iconst_0
+      81: anewarray     #138                // class java/lang/String
+      84: invokestatic  #903                // Method java/nio/file/Paths.get:(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;
+      87: iconst_0
+      88: anewarray     #1181               // class java/nio/file/attribute/FileAttribute
+      91: invokestatic  #1183               // Method java/nio/file/Files.createDirectories:(Ljava/nio/file/Path;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;
+      94: pop
+      95: new           #1427               // class java/util/Properties
+      98: dup
+      99: invokespecial #1429               // Method java/util/Properties."<init>":()V
+     102: astore        6
+     104: new           #524                // class java/io/File
+     107: dup
+     108: aload         5
+     110: getstatic     #1423               // Field java/io/File.separator:Ljava/lang/String;
+     113: invokedynamic #1430,  0           // InvokeDynamic #75:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+     118: invokespecial #529                // Method java/io/File."<init>":(Ljava/lang/String;)V
+     121: astore        7
+     123: aload         7
+     125: invokevirtual #530                // Method java/io/File.exists:()Z
+     128: ifeq          179
+     131: new           #1431               // class java/io/FileInputStream
+     134: dup
+     135: aload         7
+     137: invokespecial #1433               // Method java/io/FileInputStream."<init>":(Ljava/io/File;)V
+     140: astore        8
+     142: aload         6
+     144: aload         8
+     146: invokevirtual #1435               // Method java/util/Properties.load:(Ljava/io/InputStream;)V
+     149: aload         8
+     151: invokevirtual #1438               // Method java/io/FileInputStream.close:()V
+     154: goto          179
+     157: astore        9
+     159: aload         8
+     161: invokevirtual #1438               // Method java/io/FileInputStream.close:()V
+     164: goto          176
+     167: astore        10
+     169: aload         9
+     171: aload         10
+     173: invokevirtual #1339               // Method java/lang/Throwable.addSuppressed:(Ljava/lang/Throwable;)V
+     176: aload         9
+     178: athrow
+     179: aload         6
+     181: ldc_w         #1439               // String GOOGLE_API_KEY
+     184: aload_2
+     185: invokevirtual #1441               // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+     188: pop
+     189: aload         6
+     191: ldc_w         #1444               // String GEMINI_MODEL
+     194: aload_3
+     195: invokevirtual #1441               // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+     198: pop
+     199: new           #1446               // class java/io/FileOutputStream
+     202: dup
+     203: aload         7
+     205: invokespecial #1448               // Method java/io/FileOutputStream."<init>":(Ljava/io/File;)V
+     208: astore        8
+     210: aload         6
+     212: aload         8
+     214: ldc_w         #1449               // String Brain AI Configuration
+     217: invokevirtual #1451               // Method java/util/Properties.store:(Ljava/io/OutputStream;Ljava/lang/String;)V
+     220: aload         8
+     222: invokevirtual #1455               // Method java/io/FileOutputStream.close:()V
+     225: goto          250
+     228: astore        9
+     230: aload         8
+     232: invokevirtual #1455               // Method java/io/FileOutputStream.close:()V
+     235: goto          247
+     238: astore        10
+     240: aload         9
+     242: aload         10
+     244: invokevirtual #1339               // Method java/lang/Throwable.addSuppressed:(Ljava/lang/Throwable;)V
+     247: aload         9
+     249: athrow
+     250: aload_0
+     251: invokestatic  #389                // Method com/forge/aiteam/APIKeyManager.getInstance:()Lcom/forge/aiteam/APIKeyManager;
+     254: invokevirtual #395                // Method com/forge/aiteam/APIKeyManager.getKeyCount:()I
+     257: aload_3
+     258: invokedynamic #1456,  0           // InvokeDynamic #76:makeConcatWithConstants:(ILjava/lang/String;)Ljava/lang/String;
+     263: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     266: goto          285
+     269: astore        5
+     271: aload_0
+     272: aload         5
+     274: invokevirtual #782                // Method java/lang/Exception.getMessage:()Ljava/lang/String;
+     277: invokedynamic #1457,  0           // InvokeDynamic #77:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     282: invokevirtual #172                // Method updateUI:(Ljava/lang/String;)V
+     285: return
+    Exception table:
+       from    to  target type
+         142   149   157   Class java/lang/Throwable
+         159   164   167   Class java/lang/Throwable
+         210   220   228   Class java/lang/Throwable
+         230   235   238   Class java/lang/Throwable
+          62   266   269   Class java/lang/Exception
+
+  private static javafx.util.Pair lambda$onSettingsButtonClick$9(javafx.scene.control.ButtonType, javafx.scene.control.ComboBox, javafx.scene.control.TextArea, javafx.scene.control.ButtonType);
+    Code:
+       0: aload_3
+       1: aload_0
+       2: if_acmpeq     7
+       5: aconst_null
+       6: areturn
+       7: aload_1
+       8: invokevirtual #713                // Method javafx/scene/control/ComboBox.getSelectionModel:()Ljavafx/scene/control/SingleSelectionModel;
+      11: invokevirtual #1458               // Method javafx/scene/control/SingleSelectionModel.getSelectedIndex:()I
+      14: istore        4
+      16: iload         4
+      18: iflt          41
+      21: iload         4
+      23: getstatic     #705                // Field GEMINI_MODELS:[[Ljava/lang/String;
+      26: arraylength
+      27: if_icmpge     41
+      30: getstatic     #705                // Field GEMINI_MODELS:[[Ljava/lang/String;
+      33: iload         4
+      35: aaload
+      36: iconst_0
+      37: aaload
+      38: goto          44
+      41: ldc_w         #703                // String gemini-2.5-flash
+      44: astore        5
+      46: new           #1406               // class javafx/util/Pair
+      49: dup
+      50: aload_2
+      51: invokevirtual #1461               // Method javafx/scene/control/TextArea.getText:()Ljava/lang/String;
+      54: invokevirtual #240                // Method java/lang/String.trim:()Ljava/lang/String;
+      57: aload         5
+      59: invokespecial #1462               // Method javafx/util/Pair."<init>":(Ljava/lang/Object;Ljava/lang/Object;)V
+      62: areturn
+
+  private static void lambda$onSettingsButtonClick$8(javafx.event.ActionEvent);
+    Code:
+       0: invokestatic  #765                // Method java/awt/Desktop.getDesktop:()Ljava/awt/Desktop;
+       3: new           #1465               // class java/net/URI
+       6: dup
+       7: ldc_w         #1467               // String https://aistudio.google.com/app/apikey
+      10: invokespecial #1469               // Method java/net/URI."<init>":(Ljava/lang/String;)V
+      13: invokevirtual #775                // Method java/awt/Desktop.browse:(Ljava/net/URI;)V
+      16: goto          20
+      19: astore_1
+      20: return
+    Exception table:
+       from    to  target type
+           0    16    19   Class java/lang/Exception
+
+  private java.lang.String lambda$runParallelCoding$7(java.lang.String, java.lang.String) throws java.lang.Exception;
+    Code:
+       0: new           #272                // class com/forge/aiteam/GeminiService
+       3: dup
+       4: invokespecial #1470               // Method com/forge/aiteam/GeminiService."<init>":()V
+       7: astore_3
+       8: aload_0
+       9: aload_3
+      10: ldc_w         #383                // String PARALLEL_CODER
+      13: aload_1
+      14: aload_2
+      15: invokevirtual #385                // Method askAgentResilient:(Lcom/forge/aiteam/GeminiService;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      18: areturn
+
+  private void lambda$enterConsultMode$6();
+    Code:
+       0: aload_0
+       1: getfield      #52                 // Field consultLabel:Ljavafx/scene/control/Label;
+       4: ifnull        15
+       7: aload_0
+       8: getfield      #52                 // Field consultLabel:Ljavafx/scene/control/Label;
+      11: iconst_0
+      12: invokevirtual #56                 // Method javafx/scene/control/Label.setVisible:(Z)V
+      15: aload_0
+      16: getfield      #1471               // Field consultOptionsBox:Ljavafx/scene/layout/VBox;
+      19: iconst_0
+      20: invokevirtual #1474               // Method javafx/scene/layout/VBox.setVisible:(Z)V
+      23: aload_0
+      24: getfield      #1471               // Field consultOptionsBox:Ljavafx/scene/layout/VBox;
+      27: iconst_0
+      28: invokevirtual #1475               // Method javafx/scene/layout/VBox.setManaged:(Z)V
+      31: aload_0
+      32: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      35: iconst_1
+      36: invokevirtual #1478               // Method javafx/scene/control/TextField.setVisible:(Z)V
+      39: aload_0
+      40: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      43: iconst_1
+      44: invokevirtual #1479               // Method javafx/scene/control/TextField.setManaged:(Z)V
+      47: return
+
+  private void lambda$enterConsultMode$5(java.util.List);
+    Code:
+       0: aload_0
+       1: getfield      #784                // Field choicesBox:Ljavafx/scene/layout/VBox;
+       4: invokevirtual #727                // Method javafx/scene/layout/VBox.getChildren:()Ljavafx/collections/ObservableList;
+       7: invokeinterface #1480,  1         // InterfaceMethod javafx/collections/ObservableList.clear:()V
+      12: aload_1
+      13: invokeinterface #438,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      18: astore_2
+      19: aload_2
+      20: invokeinterface #442,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      25: ifeq          66
+      28: aload_2
+      29: invokeinterface #447,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      34: checkcast     #138                // class java/lang/String
+      37: astore_3
+      38: new           #790                // class javafx/scene/control/CheckBox
+      41: dup
+      42: aload_3
+      43: invokespecial #1481               // Method javafx/scene/control/CheckBox."<init>":(Ljava/lang/String;)V
+      46: astore        4
+      48: aload_0
+      49: getfield      #784                // Field choicesBox:Ljavafx/scene/layout/VBox;
+      52: invokevirtual #727                // Method javafx/scene/layout/VBox.getChildren:()Ljavafx/collections/ObservableList;
+      55: aload         4
+      57: invokeinterface #712,  2          // InterfaceMethod javafx/collections/ObservableList.add:(Ljava/lang/Object;)Z
+      62: pop
+      63: goto          19
+      66: aload_0
+      67: getfield      #1471               // Field consultOptionsBox:Ljavafx/scene/layout/VBox;
+      70: iconst_1
+      71: invokevirtual #1474               // Method javafx/scene/layout/VBox.setVisible:(Z)V
+      74: aload_0
+      75: getfield      #1471               // Field consultOptionsBox:Ljavafx/scene/layout/VBox;
+      78: iconst_1
+      79: invokevirtual #1475               // Method javafx/scene/layout/VBox.setManaged:(Z)V
+      82: aload_0
+      83: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      86: iconst_0
+      87: invokevirtual #1478               // Method javafx/scene/control/TextField.setVisible:(Z)V
+      90: aload_0
+      91: getfield      #537                // Field userInputField:Ljavafx/scene/control/TextField;
+      94: iconst_0
+      95: invokevirtual #1479               // Method javafx/scene/control/TextField.setManaged:(Z)V
+      98: aload_0
+      99: getfield      #799                // Field otherInputField:Ljavafx/scene/control/TextField;
+     102: invokevirtual #808                // Method javafx/scene/control/TextField.clear:()V
+     105: return
+
+  private void lambda$enterConsultMode$4();
+    Code:
+       0: aload_0
+       1: getfield      #52                 // Field consultLabel:Ljavafx/scene/control/Label;
+       4: ifnull        25
+       7: aload_0
+       8: getfield      #52                 // Field consultLabel:Ljavafx/scene/control/Label;
+      11: ldc_w         #1482               // String ?? Agent Paused û Type guidance below and press Send to resume
+      14: invokevirtual #1484               // Method javafx/scene/control/Label.setText:(Ljava/lang/String;)V
+      17: aload_0
+      18: getfield      #52                 // Field consultLabel:Ljavafx/scene/control/Label;
+      21: iconst_1
+      22: invokevirtual #56                 // Method javafx/scene/control/Label.setVisible:(Z)V
+      25: aload_0
+      26: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+      29: ifnull        40
+      32: aload_0
+      33: getfield      #868                // Field helloButton:Ljavafx/scene/control/Button;
+      36: iconst_0
+      37: invokevirtual #46                 // Method javafx/scene/control/Button.setDisable:(Z)V
+      40: return
+
+  private void lambda$updateUI$3(java.lang.String);
+    Code:
+       0: aload_0
+       1: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+       4: aload_1
+       5: invokedynamic #1485,  0           // InvokeDynamic #78:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      10: invokevirtual #1350               // Method javafx/scene/control/TextArea.appendText:(Ljava/lang/String;)V
+      13: aload_0
+      14: getfield      #33                 // Field userScrolledUp:Z
+      17: ifne          30
+      20: aload_0
+      21: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+      24: ldc2_w        #1486               // double 1.7976931348623157E308d
+      27: invokevirtual #1488               // Method javafx/scene/control/TextArea.setScrollTop:(D)V
+      30: return
+
+  private void lambda$setupSmartScroll$2(javafx.beans.value.ObservableValue, javafx.scene.control.Skin, javafx.scene.control.Skin);
+    Code:
+       0: aload_3
+       1: ifnonnull     5
+       4: return
+       5: aload_0
+       6: getfield      #114                // Field outputArea:Ljavafx/scene/control/TextArea;
+       9: ldc_w         #1491               // String .scroll-bar:vertical
+      12: invokevirtual #1493               // Method javafx/scene/control/TextArea.lookup:(Ljava/lang/String;)Ljavafx/scene/Node;
+      15: checkcast     #1497               // class javafx/scene/control/ScrollBar
+      18: astore        4
+      20: aload         4
+      22: ifnonnull     26
+      25: return
+      26: aload         4
+      28: invokevirtual #1499               // Method javafx/scene/control/ScrollBar.valueProperty:()Ljavafx/beans/property/DoubleProperty;
+      31: aload_0
+      32: aload         4
+      34: invokedynamic #1503,  0           // InvokeDynamic #79:changed:(Lcom/forge/aiteam/MainController;Ljavafx/scene/control/ScrollBar;)Ljavafx/beans/value/ChangeListener;
+      39: invokevirtual #1506               // Method javafx/beans/property/DoubleProperty.addListener:(Ljavafx/beans/value/ChangeListener;)V
+      42: return
+
+  private void lambda$setupSmartScroll$1(javafx.scene.control.ScrollBar, javafx.beans.value.ObservableValue, java.lang.Number, java.lang.Number);
+    Code:
+       0: aload_1
+       1: invokevirtual #1509               // Method javafx/scene/control/ScrollBar.getMax:()D
+       4: dstore        5
+       6: aload_0
+       7: aload         4
+       9: invokevirtual #1513               // Method java/lang/Number.doubleValue:()D
+      12: dload         5
+      14: ldc2_w        #1518               // double 0.01d
+      17: dsub
+      18: dcmpg
+      19: ifge          26
+      22: iconst_1
+      23: goto          27
+      26: iconst_0
+      27: putfield      #33                 // Field userScrolledUp:Z
+      30: return
+
+  private void lambda$showSpinner$0(boolean);
+    Code:
+       0: aload_0
+       1: getfield      #61                 // Field spinnerArc:Ljavafx/scene/shape/Arc;
+       4: ifnonnull     8
+       7: return
+       8: aload_0
+       9: getfield      #61                 // Field spinnerArc:Ljavafx/scene/shape/Arc;
+      12: iload_1
+      13: invokevirtual #65                 // Method javafx/scene/shape/Arc.setVisible:(Z)V
+      16: iload_1
+      17: ifeq          30
+      20: aload_0
+      21: getfield      #81                 // Field spinnerAnim:Ljavafx/animation/RotateTransition;
+      24: invokevirtual #1520               // Method javafx/animation/RotateTransition.play:()V
+      27: goto          37
+      30: aload_0
+      31: getfield      #81                 // Field spinnerAnim:Ljavafx/animation/RotateTransition;
+      34: invokevirtual #1523               // Method javafx/animation/RotateTransition.stop:()V
+      37: return
+
+  static {};
+    Code:
+       0: ldc_w         #1421               // String user.home
+       3: invokestatic  #1042               // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       6: getstatic     #1423               // Field java/io/File.separator:Ljava/lang/String;
+       9: invokedynamic #1526,  0           // InvokeDynamic #80:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      14: putstatic     #526                // Field PROJECTS_ROOT:Ljava/lang/String;
+      17: iconst_4
+      18: anewarray     #1236               // class "[Ljava/lang/String;"
+      21: dup
+      22: iconst_0
+      23: iconst_2
+      24: anewarray     #138                // class java/lang/String
+      27: dup
+      28: iconst_0
+      29: ldc_w         #1527               // String gemini-3-flash-preview
+      32: aastore
+      33: dup
+      34: iconst_1
+      35: ldc_w         #1529               // String Gemini 3 Flash Preview (Latest & Fastest) ?
+      38: aastore
+      39: aastore
+      40: dup
+      41: iconst_1
+      42: iconst_2
+      43: anewarray     #138                // class java/lang/String
+      46: dup
+      47: iconst_0
+      48: ldc_w         #1531               // String gemini-2.0-flash
+      51: aastore
+      52: dup
+      53: iconst_1
+      54: ldc_w         #1533               // String Gemini 2.0 Flash (Advanced) ?
+      57: aastore
+      58: aastore
+      59: dup
+      60: iconst_2
+      61: iconst_2
+      62: anewarray     #138                // class java/lang/String
+      65: dup
+      66: iconst_0
+      67: ldc_w         #1535               // String gemini-1.5-flash
+      70: aastore
+      71: dup
+      72: iconst_1
+      73: ldc_w         #1537               // String Gemini 1.5 Flash (Stable/Fast) ?
+      76: aastore
+      77: aastore
+      78: dup
+      79: iconst_3
+      80: iconst_2
+      81: anewarray     #138                // class java/lang/String
+      84: dup
+      85: iconst_0
+      86: ldc_w         #1539               // String gemini-1.5-pro
+      89: aastore
+      90: dup
+      91: iconst_1
+      92: ldc_w         #1541               // String Gemini 1.5 Pro (Highest Quality) ?
+      95: aastore
+      96: aastore
+      97: putstatic     #705                // Field GEMINI_MODELS:[[Ljava/lang/String;
+     100: return
+}

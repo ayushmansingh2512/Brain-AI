@@ -1,0 +1,13 @@
+--module-path
+javafx-sdk\\lib
+--add-modules
+javafx.controls,javafx.fxml,javafx.graphics,javafx.base,javafx.swing
+-cp
+lib\\commons-logging.jar;lib\\google-genai.jar;lib\\guava.jar;lib\\h2.jar;lib\\httpclient.jar;lib\\httpcore.jar;lib\\jackson-annotations.jar;lib\\jackson-core.jar;lib\\jackson-databind.jar;lib\\jackson-datatype-jdk8.jar;lib\\jackson-datatype-jsr310.jar;lib\\javafx-swt.jar;lib\\javafx.base.jar;lib\\javafx.controls.jar;lib\\javafx.fxml.jar;lib\\javafx.graphics.jar;lib\\javafx.media.jar;lib\\javafx.swing.jar;lib\\javafx.web.jar;lib\\ojdbc.jar;javafx-sdk\\lib\\javafx-swt.jar;javafx-sdk\\lib\\javafx.base.jar;javafx-sdk\\lib\\javafx.controls.jar;javafx-sdk\\lib\\javafx.fxml.jar;javafx-sdk\\lib\\javafx.graphics.jar;javafx-sdk\\lib\\javafx.media.jar;javafx-sdk\\lib\\javafx.swing.jar;javafx-sdk\\lib\\javafx.web.jar
+-d
+build\\classes
+src\\main\\java\\com\\forge\\aiteam\\APIKeyManager.java
+src\\main\\java\\com\\forge\\aiteam\\DatabaseConnection.java
+src\\main\\java\\com\\forge\\aiteam\\GeminiService.java
+src\\main\\java\\com\\forge\\aiteam\\MainApp.java
+src\\main\\java\\com\\forge\\aiteam\\MainController.java
